@@ -19,6 +19,8 @@ defined( 'ABSPATH' ) OR exit;
 
  //Inculde the general defenition file:
  require_once plugin_dir_path ( __FILE__ ) . 'includes/defs.php';
+ // Plugin update script
+ require_once( PROMO_NFT_PLUGIN_MODEL_DIR . '/BFIGitHubPluginUploader.php' );
 
 /* Register the hooks */
     register_activation_hook( __FILE__, array( 'PromoNft', 'on_activation' ) );
@@ -77,7 +79,8 @@ defined( 'ABSPATH' ) OR exit;
              //Setup admin page
              $this->createAdmin();
              // Load backend scripts
-
+             
+             new BFIGitHubPluginUpdater( __FILE__, 'MrXenon', "promo-nft" );
          } else {
              // Load front-end scripts
             wp_enqueue_script('bootstrap1', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.bundle.js');
@@ -99,7 +102,7 @@ defined( 'ABSPATH' ) OR exit;
 
      public function custom_plugin_row_meta( $links, $file ) 
     {
-        if ( strpos( $file, 'my-event-organiser.php' ) !== false ) {
+        if ( strpos( $file, 'promo-nft.php' ) !== false ) {
 	    $new_links = array(
             '<a href="mailto:info@kevinschuit.com" target="_blank">Support</a>',
                '<a href="'.admin_url().'admin.php?page=changelog">Changelog</a>'
