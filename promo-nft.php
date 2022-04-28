@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: PromoNft
  * Plugin URI: <>
  * Description: TODO:: ADD TEKST
- * Version: 0.0.1
+ * Version: 0.0.0
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) OR exit;
  //Inculde the general defenition file:
  require_once plugin_dir_path ( __FILE__ ) . 'includes/defs.php';
  // Plugin update script
- require_once( PROMO_NFT_PLUGIN_MODEL_DIR . '/BFIGitHubPluginUploader.php' );
+include_once( plugin_dir_path( __FILE__ ) . 'updater.php' );
 
 /* Register the hooks */
     register_activation_hook( __FILE__, array( 'PromoNft', 'on_activation' ) );
@@ -79,8 +79,13 @@ defined( 'ABSPATH' ) OR exit;
              //Setup admin page
              $this->createAdmin();
              // Load backend scripts
+
+                $updater = new Smashing_Updater( __FILE__ );
+                $updater->set_username( 'MrXenon' );
+                $updater->set_repository( 'promo-nft' );
+                $updater->authorize( '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' ); // Your auth code goes here for private repos
+                $updater->initialize();
              
-             new BFIGitHubPluginUpdater( __FILE__, 'MrXenon', "promo-nft" );
          } else {
              // Load front-end scripts
             wp_enqueue_script('bootstrap1', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.bundle.js');
