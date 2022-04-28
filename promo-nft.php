@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: PromoNft
  * Plugin URI: <>
  * Description: TODO:: ADD TEKST
- * Version: 3.0.0
+ * Version: 0.0.1
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
