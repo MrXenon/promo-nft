@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 1.0.0
+ * Version: 1.0.2
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -139,7 +139,7 @@ defined( 'ABSPATH' ) OR exit;
 
 
         $wpdb->query("DROP TABLE $updateLog");
-        
+
         $sql = "CREATE TABLE IF NOT EXISTS $updateLog (
             uid BIGINT(11) NOT NULL AUTO_INCREMENT,
             update_version VARCHAR(64) NOT NULL,
