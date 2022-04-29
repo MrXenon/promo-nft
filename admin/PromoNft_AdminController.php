@@ -28,8 +28,7 @@
                 $my_page_4 = add_submenu_page ('promo-nft-admin',__( 'NFT Collections', 'promo-nft' ), __( 'NFT Collections', 'promo-nft'),'manage_options','nft_collections', array( 'PromoNft_AdminController', 'nftCollections'));
                 }
                 $my_page_5 = add_submenu_page ('promo-nft-admin',__( 'Archive', 'promo-nft' ),__( 'Archive', 'promo-nft'),'manage_options', 'nft_archive', array( 'PromoNft_AdminController', 'nftCollectionArchive'));
-                $my_page_6 = add_submenu_page ('promo-nft-admin',__( 'Changelog', 'promo-nft' ),__( 'Changelog', 'promo-nft'),'manage_options', 'changelog', array( 'PromoNft_AdminController', 'nftChangelog'));
-         
+                $my_page_6 = add_submenu_page ('promo-nft-admin',__( 'Support', 'promo-nft' ),__( 'Support', 'promo-nft'),'manage_options', 'nft_support', array( 'PromoNft_AdminController', 'nftSupport'));
                  // Load the JS conditionally
                  add_action( 'load-' . $my_page_1,array('PromoNft_AdminController', 'load_admin_js') );
                  add_action( 'load-' . $my_page_2,array('PromoNft_AdminController', 'load_admin_js') );
@@ -37,7 +36,6 @@
                  add_action( 'load-' . $my_page_4,array('PromoNft_AdminController', 'load_admin_js') );
                  add_action( 'load-' . $my_page_5,array('PromoNft_AdminController', 'load_admin_js') );
                  add_action( 'load-' . $my_page_6,array('PromoNft_AdminController', 'load_admin_js') );
-                 
              }
          
              // This function is only called when our plugin's page loads!
@@ -87,9 +85,8 @@
             static function nftCollectionArchive(){
                 include PROMO_NFT_PLUGIN_ADMIN_VIEWS_DIR . '/nft_archive.php';
             }
-            static function nftChangelog()
-            {
-                include PROMO_NFT_PLUGIN_ADMIN_VIEWS_DIR . '/changelog.php';
+            static function nftSupport(){
+                include PROMO_NFT_PLUGIN_ADMIN_VIEWS_DIR . '/nft_support.php';
             }
     }
 ?>

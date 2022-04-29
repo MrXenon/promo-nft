@@ -27,6 +27,21 @@ class NftPromoModel {
     private $collectTwitter         =   '';
     private $collectDiscord         =   '';
     private $collectFeatured        =   '';
+    // Define shortcode variables
+    private $shortId                =   '';
+    private $shortName              =   '';
+    private $shortDesc              =   '';
+    // Define author variables      
+    private $authId                 =   '';
+    private $authName               =   '';
+    private $authMail               =   '';
+    private $authSite               =   '';
+    //Define update log
+    private $uid                    =   '';
+    private $uvers                  =   '';
+    private $udesc                  =   '';
+    private $ulist                  =   '';
+    private $ufdesc                 =   '';
     // Define classes
     private $nftCheck               = null;
     private $nftListsAndNumbers     = null;
@@ -141,12 +156,27 @@ class NftPromoModel {
     public function getNetworkById($id) {return $this->nftListsAndNumbers->getNetworkById($id);}
     public function getNrOfArchivedNetworks(){return $this->nftListsAndNumbers->getNrOfArchivedNetworks();}
     public function getNrOfArchivedCollections(){return $this->nftListsAndNumbers->getNrOfArchivedCollections();}
+    public function getNftShortcodes(){return $this->nftListsAndNumbers->getNftShortcodes();}
+    public function getNftAuthor(){return $this->nftListsAndNumbers->getNftAuthor();}
+    public function getNftUpdateLog(){return $this->nftListsAndNumbers->getNftUpdateLog();}
+    public function getNftChangeLog(){return $this->nftListsAndNumbers->getNftChangeLog();}
 
 
-    /**
-     * NftPromoModel get & set values for data export/import.
-     */
+    // Get Network
+    public function getNetworkId(){
+        return $this->networkId;
+    }
+    public function getNetworkName(){
+        return $this->networkName;
+    }
 
+    public function getNetworkDescription(){
+        return $this->networkDesc;
+    }
+    public function getNetworkArchive(){
+        return $this->archive;
+    }
+    // Set Network
     public function setNetworkId( $networkId ){
         if ( is_int(intval($networkId) ) ){
             $this->networkId = $networkId;
@@ -162,25 +192,74 @@ class NftPromoModel {
             $this->archive = trim($archive);
         }
     }
-    public function getNetworkId(){
-        return $this->networkId;
-    }
-    public function getNetworkName(){
-        return $this->networkName;
-    }
-
-    public function getNetworkDescription(){
-        return $this->networkDesc;
-    }
-    public function getNetworkArchive(){
-        return $this->archive;
-    }
 
     public function setNetworkDescription ($networkDesc){
         if ( is_string($networkDesc)){
             $this->networkDesc = trim($networkDesc);
         }
     }
+
+    // Set Shortcodes
+    public function setShortcodeId( $shortId ){
+        if ( is_int(intval($shortId) )){
+            $this->shortId = trim($shortId);
+        }
+    }
+    public function setShortcodeName( $shortName ){
+        if ( is_string( $shortName )){
+            $this->shortName = trim($shortName);
+        }
+    }
+    public function setShortcodeDesc( $shortDesc ){
+        if ( is_string( $shortDesc )){
+            $this->shortDesc = trim($shortDesc);
+        }
+    }
+    // Get Shortcodes
+    public function getShortId(){
+        return $this->shortId;
+    }
+    public function getShortName(){
+        return $this->shortName;
+    }
+    public function getShortDesc(){
+        return $this->shortDesc;
+    }
+    // Set Author
+    public function setAuthorId( $authId ){
+        if ( is_int(intval( $authId ))){
+            $this->authId = trim($authId);
+        }
+    }
+    public function setAuthorName( $authName ){
+        if ( is_string( $authName )){
+            $this->authName = trim($authName);
+        }
+    }
+    public function setAuthorMail( $authMail ){
+        if ( is_string( $authMail )){
+            $this->authMail = trim($authMail);
+        }
+    }
+    public function setAuthorSite( $authSite ){
+        if ( is_string( $authSite )){
+            $this->authSite = trim($authSite);
+        }
+    }
+    // Get Author
+    public function GetAuthorId(){
+        return $this->authId;
+    }
+    public function getAuthorName(){
+        return $this->authName;
+    }
+    public function getAuthorMail(){
+        return $this->authMail;
+    }
+    public function getAuthorSite(){
+        return $this->authSite;
+    }
+    // Set Collection
     public function setCollectionImage( $collectImage ){
         if ( is_string( $collectImage )){
             $this->collectImage = trim($collectImage);
@@ -246,6 +325,8 @@ class NftPromoModel {
             $this->collectFeatured = trim($collectFeatured);
         }
     }
+
+    // Get Collection
     public function getCollectionId(){
         return $this->collectionId;
     }
@@ -284,6 +365,47 @@ class NftPromoModel {
     }
     public function getCollectionFeatured(){
         return $this->collectFeatured;
+    }
+    // Set update log
+    public function setUpdateId( $uid ){
+        if ( is_int(intval( $uid ))){
+            $this->uid = trim($uid);
+        }
+    }
+    public function setUpdateVersion( $uvers ){
+        if ( is_string( $uvers )){
+            $this->uvers = trim($uvers);
+        }
+    }
+    public function setUpdateDesc( $udesc ){
+        if ( is_string( $udesc )){
+            $this->udesc = trim($udesc);
+        }
+    }
+    public function setUpdateList( $ulist ){
+        if ( is_string( $ulist )){
+            $this->ulist = trim($ulist);
+        }
+    }
+    public function setUpdateFdesc( $ufdesc ){
+        if ( is_string( $ufdesc )){
+            $this->ufdesc = trim($ufdesc);
+        }
+    }
+    public function getUpdateId(){
+        return $this->uid;
+    }
+    public function getUpdateVersion(){
+        return $this->uvers;
+    }
+    public function getUpdateDesc(){
+        return $this->udesc;
+    }
+    public function getUpdateList(){
+        return $this->ulist;
+    }
+    public function getUpdateFdesc(){
+        return $this->ufdesc;
     }
 }
 ?>

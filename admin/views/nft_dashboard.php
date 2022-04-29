@@ -15,6 +15,10 @@ $ColNr      =   $NftPromoModel->getNrOfCollections();
 $featured   =   $NftPromoModel->getNrOfFeaturedCollections();
 $ArchiveNet =   $NftPromoModel->getNrOfArchivedNetworks();
 $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
+$Shortcodes =   $NftPromoModel->getNftShortcodes();
+$Author     =   $NftPromoModel->getNftAuthor();
+$updateLog  =   $NftPromoModel->getNftUpdateLog();
+$changeLog  =   $NftPromoModel->getNftChangeLog();
 ?>
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/css/bootstrap-extended.min.css">
@@ -220,12 +224,14 @@ $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-       <strong>[nft_featured_items]</strong> this shortcode displays the featured items. Include this on your page in order to display the featured content.<br><br><br>
-       <strong>[nft_single]</strong> this shortcode displays the single page content, this shortcode is automaticly included on each page, created when adding a new network.
+      <?php 
+        foreach($Shortcodes as $obj){
+          echo '<strong>'.$obj->getShortName().'</strong> '.  $obj->getShortDesc(). '<br><br> ';
+        }
+        ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Continue</button>
       </div>
     </div>
   </div>
@@ -239,11 +245,17 @@ $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Nothing added yet
+      <?php foreach($changeLog as $obj){ ?>
+          <p><?=$obj->getUpdateDesc();?></p>
+            <h5><strong><?=$obj->getUpdateVersion();?> contains:</strong></h5>
+            <ul style="font-size:13px;">
+              <?=$obj->getUpdateList();?>
+            </ul>
+            <p><?=$obj->getUpdateFdesc();?></p>
+            <?php } ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Continue</button>
       </div>
     </div>
   </div>
@@ -257,11 +269,30 @@ $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Nothing added yet
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <?php foreach($updateLog as $obj){ ?>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="<?=$obj->getUpdateVersion();?>" data-bs-toggle="tab" data-bs-target="#version<?=$obj->getUpdateId();?>" type="button" role="tab" aria-controls="<?=$obj->getUpdateVersion();?>" aria-selected="true"><?=$obj->getUpdateVersion();?></button>
+        </li>
+          <?php }?>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+      <?php foreach($updateLog as $obj){ ?>
+        <div class="tab-pane fade" id="version<?=$obj->getUpdateId();?>" role="tabpanel" aria-labelledby="test">
+          <div class="tab-pane fade show" id="<?=$obj->getUpdateVersion();?>" role="tabpanel" aria-labelledby="<?=$obj->getUpdateVersion();?>">
+            <p><?=$obj->getUpdateDesc();?></p>
+            <h5><strong><?=$obj->getUpdateVersion();?> contains:</strong></h5>
+            <ul style="font-size:13px;">
+              <?=$obj->getUpdateList();?>
+            </ul>
+            <p><?=$obj->getUpdateFdesc();?></p>
+          </div>
+        </div>
+        <?php } ?>
+      </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Continue</button>
       </div>
     </div>
   </div>
@@ -275,11 +306,14 @@ $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Kevin Schuit <a href="https://kevinschuit.com" target="_blank">Visit author page</a>
+        <?php
+        foreach($Author as $obj){
+          echo $obj->getAuthorName() . ' <a href="'.$obj->getAuthorSite().'" target="_blank">Visit author page</a>';
+        }
+        ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Continue</button>
       </div>
     </div>
   </div>

@@ -1,26 +1,20 @@
 <?php
-
 defined( 'ABSPATH' ) OR exit;
-
 /**
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 0.0.1
+ * Version: 1.0.0
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
  * Domain Path: /lang/
  */
-
- //Define the plugin name:
- //Activeren en deactiveren
  define ( 'PROMO_NFT_PLUGIN', __FILE__ );
 
- //Inculde the general defenition file:
  require_once plugin_dir_path ( __FILE__ ) . 'includes/defs.php';
  require_once( 'BFIGitHubPluginUploader.php' );
-/* Register the hooks */
+
     register_activation_hook( __FILE__, array( 'PromoNft', 'on_activation' ) );
     register_deactivation_hook( __FILE__, array( 'PromoNft', 'on_deactivation' ) );
  
@@ -28,11 +22,8 @@ defined( 'ABSPATH' ) OR exit;
  {
      public function __construct()
      {
-
-         //Fire a hook before the class is setup.
          do_action('PROMO_NFT_pre_init');
 
-         //Load the plugin
          add_action('init', array($this, 'init'), 1);
      }
 
@@ -42,8 +33,6 @@ defined( 'ABSPATH' ) OR exit;
              return;
          $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
          check_admin_referer( "activate-plugin_{$plugin}" );
-
-         // Add the theme capabilities
          PromoNft::createDb();
      }
      public static function on_deactivation()
@@ -55,33 +44,16 @@ defined( 'ABSPATH' ) OR exit;
 
      }
 
-     /**
-      * Loads the plugin into Wordpress
-      *
-      * @since 1.0.0
-      */
      public function init()
      {
-
-        // Toon extra links in de plug-in description.
         add_filter( 'plugin_row_meta', [$this, 'custom_plugin_row_meta'], 10, 2 );
-         // Run hook once Plugin has been initialized
          do_action('PROMO_NFT_init');
-
-         // Load admin only components.
          if (is_admin()) {
-
-             //Load all admin specific includes
              $this->requireAdmin();
-
-             //Setup admin page
              $this->createAdmin();
-
              new BFIGitHubPluginUpdater( __FILE__, 'MrXenon', "promo-nft" );
-             // Load backend scripts
              
          } else {
-             // Load front-end scripts
             wp_enqueue_script('bootstrap1', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.bundle.js');
             wp_enqueue_script('bootstrap2', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.esm.js');
             wp_enqueue_script('bootstrap3', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.js');
@@ -94,8 +66,6 @@ defined( 'ABSPATH' ) OR exit;
             wp_enqueue_style('bootstrap7', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/css/bootstrap-grid.css');
             wp_enqueue_style('css', plugin_dir_url(__FILE__).'css/style.css');
          }
-
-         // Load the view shortcodes
          $this->loadViews();
      }
 
@@ -103,8 +73,8 @@ defined( 'ABSPATH' ) OR exit;
     {
         if ( strpos( $file, 'promo-nft.php' ) !== false ) {
 	    $new_links = array(
-            '<a href="mailto:info@kevinschuit.com" target="_blank">Support</a>',
-               '<a href="'.admin_url().'admin.php?page=changelog">Changelog</a>'
+            '<a href="'.admin_url().'admin.php?page=nft_support">Support</a>',
+               '<a href="'.admin_url().'admin.php?page=nft_dashboard">Dashboard</a>'
 			);
 		
 		$links = array_merge( $links, $new_links );
@@ -114,8 +84,6 @@ defined( 'ABSPATH' ) OR exit;
     }
      public function requireAdmin()
      {
-
-         //Admin controller file
          require_once PROMO_NFT_PLUGIN_ADMIN_DIR . '/PromoNft_AdminController.php';
      }
 
@@ -131,7 +99,6 @@ defined( 'ABSPATH' ) OR exit;
 
      public static function createDb()
      {
-
          require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
          global $wpdb;
@@ -140,7 +107,9 @@ defined( 'ABSPATH' ) OR exit;
 
          $colnet            =    $wpdb->prefix . "nft_colnet";
          $collect           =    $wpdb->prefix . "nft_collect";
-
+		 $shortcodes		=	 $wpdb->prefix . "nft_shortcodes";
+		 $author			=	 $wpdb->prefix . "nft_author";
+		 $updateLog			=	 $wpdb->prefix . "nft_update";
 
          $sql = "CREATE TABLE IF NOT EXISTS $colnet (
             colnet_id BIGINT(11) NOT NULL AUTO_INCREMENT,
@@ -151,8 +120,39 @@ defined( 'ABSPATH' ) OR exit;
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
 
+		 $sql = "CREATE TABLE IF NOT EXISTS $shortcodes (
+            sid BIGINT(11) NOT NULL AUTO_INCREMENT,
+            short_name VARCHAR(64) NOT NULL,
+            short_desc VARCHAR(1024) NOT NULL,
+            PRIMARY KEY  (sid))
+            ENGINE = InnoDB $charset_collate";
+         dbDelta($sql);
+
+		 $sql = "CREATE TABLE IF NOT EXISTS $author (
+            aid BIGINT(11) NOT NULL AUTO_INCREMENT,
+            author_name VARCHAR(64) NOT NULL,
+			author_email VARCHAR(64) NOT NULL,
+			author_website VARCHAR(64) NOT NULL,
+            PRIMARY KEY  (aid))
+            ENGINE = InnoDB $charset_collate";
+         dbDelta($sql);
+
+
+        $wpdb->query("DROP TABLE $updateLog");
+        
+        $sql = "CREATE TABLE IF NOT EXISTS $updateLog (
+            uid BIGINT(11) NOT NULL AUTO_INCREMENT,
+            update_version VARCHAR(64) NOT NULL,
+            update_desc VARCHAR(2048) NOT NULL,
+            update_list TEXT(2048) NOT NULL,
+            future_desc VARCHAR(2048) NOT NULL,
+            PRIMARY KEY  (uid))
+            ENGINE = InnoDB $charset_collate";
+        dbDelta($sql);    
+
          $sql = "CREATE TABLE IF NOT EXISTS $collect (
             collect_id BIGINT(11) NOT NULL AUTO_INCREMENT,
+            collect_img VARCHAR(255) NOT NULL,
             collect_title VARCHAR(64) NOT NULL,
             collect_desc VARCHAR(1024) NOT NULL,
             collect_date DATETIME NOT NULL,
@@ -163,275 +163,44 @@ defined( 'ABSPATH' ) OR exit;
             collect_twitter VARCHAR(255) NOT NULL,
             collect_discord VARCHAR(255) NOT NULL,
             collect_price VARCHAR(255) NOT NULL,
-            collect_featured BIT(1) NOT NULL,
+            collect_featured varchar(4) NOT NULL,
             archive BIT(1) NOT NULL,
             PRIMARY KEY  (collect_id))
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
-     }
 
+		 $sql = "INSERT INTO `$shortcodes` (`sid`, `short_name`,`short_desc`) VALUES
+		(1, '[nft_featured_items]','This shortcode displays the featured items. Include this on your page in order to display the featured content.'),
+		(2, '[nft_single]','This shortcode displays the single page content, this shortcode is automaticly included on each page, created when adding a new network.');";
+			dbDelta($sql);
+
+		$sql = "INSERT INTO `$author` (`aid`, `author_name`,`author_email`,`author_website`) VALUES
+		(1, 'Kevin Schuit','info@kevinschuit.com','https://kevinschuit.com');";
+			dbDelta($sql);
+
+            $sql = "INSERT INTO `$updateLog` (`uid`, `update_version`,`update_desc`,`update_list`,`future_desc`) VALUES
+            (1, 'V1.0.1','Base version of the Promo NFT plug-in. This plug-in makes it available for the user to create new NFT networks, create new NFT collection, archive and publish these networks and collections and display them on the front-end by using a shortcode, which is issued by the plug-in itself.',
+            '<li>Create a network.</li><li>Create a NFT collection.</li>
+            <li>Archive a network.</li>
+            <li>Archive a NFT collection.</li>
+            <li>Publish a network.</li>
+            <li>Publish a NFT collection.</li>
+            <li>Update a network.</li>
+            <li>Update a NFT collection.</li>
+            <li>Delete a network when archived.</li>
+            <li>Delete a NFT collection when archived.</li>
+            <li>Sorted display on the front-end, between archived items and published items.</li>
+            <li>Display featured items.</li>
+            <li>Display a NFT collecton on their respective page.</li>', 
+            'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
+            (2, 'V1.0.2','Updates to the backend of the system, cleaned out some redundant code and initialized data on plug-in installation, which is used throughout the system',
+            '<li>Added a support form for the site owner.</li>
+            <li>Dynamic loading of plugin name, changelog & author in dashboard.</li>
+            <li>Added an icon & banner to the plug-in description.</li>
+            <li>Cleaned up code</li>', 
+            'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.');";
+                dbDelta($sql);
+		}
  }
-
  $promo_nft = new PromoNft();
-
-
- /**
- * Configuration assistant for updating from private repositories.
- * Do not include this in your plugin once you get your access token.
- *
- * @see /wp-admin/plugins.php?page=github-updater
- */
-class WPGitHubUpdaterSetup {
-
-	/**
-	 * Full file system path to the main plugin file
-	 *
-	 * @var string
-	 */
-	var $plugin_file;
-
-	/**
-	 * Path to the main plugin file relative to WP_CONTENT_DIR/plugins
-	 *
-	 * @var string
-	 */
-	var $plugin_basename;
-
-	/**
-	 * Name of options page hook
-	 *
-	 * @var string
-	 */
-	var $options_page_hookname;
-
-	function __construct() {
-
-		// Full path and plugin basename of the main plugin file
-		$this->plugin_file = __FILE__;
-		$this->plugin_basename = plugin_basename( $this->plugin_file );
-
-		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'admin_menu', array( $this, 'add_page' ) );
-		add_action( 'network_admin_menu', array( $this, 'add_page' ) );
-
-		add_action( 'wp_ajax_set_github_oauth_key', array( $this, 'ajax_set_github_oauth_key' ) );
-	}
-
-	/**
-	 * Add the options page
-	 *
-	 * @return none
-	 */
-	function add_page() {
-		if ( current_user_can ( 'manage_options' ) ) {
-			$this->options_page_hookname = add_plugins_page ( __( 'GitHub Updates', 'github_plugin_updater' ), __( 'GitHub Updates', 'github_plugin_updater' ), 'manage_options', 'github-updater', array( $this, 'admin_page' ) );
-			add_filter( "network_admin_plugin_action_links_{$this->plugin_basename}", array( $this, 'filter_plugin_actions' ) );
-			add_filter( "plugin_action_links_{$this->plugin_basename}", array( $this, 'filter_plugin_actions' ) );
-		}
-	}
-
-	/**
-	 * Add fields and groups to the settings page
-	 *
-	 * @return none
-	 */
-	public function settings_fields() {
-		register_setting( 'ghupdate', 'ghupdate', array( $this, 'settings_validate' ) );
-
-		// Sections: ID, Label, Description callback, Page ID
-		add_settings_section( 'ghupdate_private', 'Private Repositories', array( $this, 'private_description' ), 'github-updater' );
-
-		// Private Repo Fields: ID, Label, Display callback, Menu page slug, Form section, callback arguements
-		add_settings_field(
-			'client_id', 'Client ID', array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
-			array(
-				'id' => 'client_id',
-				'type' => 'text',
-				'description' => '',
-			)
-		);
-		add_settings_field(
-			'client_secret', 'Client Secret', array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
-			array(
-				'id' => 'client_secret',
-				'type' => 'text',
-				'description' => '',
-			)
-		);
-		add_settings_field(
-			'access_token', 'Access Token', array( $this, 'token_field' ), 'github-updater', 'ghupdate_private',
-			array(
-				'id' => 'access_token',
-			)
-		);
-		add_settings_field(
-			'gh_authorize', '<p class="submit"><input class="button-primary" type="submit" value="'.__( 'Authorize with GitHub', 'github_plugin_updater' ).'" /></p>', null, 'github-updater', 'ghupdate_private', null
-		);
-
-	}
-
-	public function private_description() {
-?>
-		<p>Updating from private repositories requires a one-time application setup and authorization. These steps will not need to be repeated for other sites once you receive your access token.</p>
-		<p>Follow these steps:</p>
-		<ol>
-			<li><a href="https://github.com/settings/applications/new" target="_blank">Create an application</a> with the <strong>Main URL</strong> and <strong>Callback URL</strong> both set to <code><?php echo bloginfo( 'url' ) ?></code></li>
-			<li>Copy the <strong>Client ID</strong> and <strong>Client Secret</strong> from your <a href="https://github.com/settings/applications" target="_blank">application details</a> into the fields below.</li>
-			<li><a href="javascript:document.forms['ghupdate'].submit();">Authorize with GitHub</a>.</li>
-		</ol>
-		<?php
-	}
-
-	public function input_field( $args ) {
-		extract( $args );
-		$gh = get_option( 'ghupdate' );
-		$value = $gh[$id];
-?>
-		<input value="<?php esc_attr_e( $value )?>" name="<?php esc_attr_e( $id ) ?>" id="<?php esc_attr_e( $id ) ?>" type="text" class="regular-text" />
-		<?php echo $description ?>
-		<?php
-	}
-
-	public function token_field( $args ) {
-		extract( $args );
-		$gh = get_option( 'ghupdate' );
-		$value = $gh[$id];
-
-		if ( empty( $value ) ) {
-?>
-			<p>Input Client ID and Client Secret, then <a href="javascript:document.forms['ghupdate'].submit();">Authorize with GitHub</a>.</p>
-			<input value="<?php esc_attr_e( $value )?>" name="<?php esc_attr_e( $id ) ?>" id="<?php esc_attr_e( $id ) ?>" type="hidden" />
-			<?php
-		}else {
-?>
-			<input value="<?php esc_attr_e( $value )?>" name="<?php esc_attr_e( $id ) ?>" id="<?php esc_attr_e( $id ) ?>" type="text" class="regular-text" />
-			<p>Add to the <strong>$config</strong> array: <code>'access_token' => '<?php echo $value ?>',</code>
-			<?php
-		}
-?>
-		<?php
-	}
-
-	public function settings_validate( $input ) {
-		if ( empty( $input ) ) {
-			$input = $_POST;
-		}
-		if ( !is_array( $input ) ) {
-			return false;
-		}
-		$gh = get_option( 'ghupdate' );
-		$valid = array();
-
-		$valid['client_id']     = strip_tags( $input['client_id'] );
-		$valid['client_secret'] = strip_tags( $input['client_secret'] );
-		$valid['access_token']  = strip_tags( $input['access_token'] );
-
-		if ( empty( $valid['client_id'] ) ) {
-			add_settings_error( 'client_id', 'no-client-id', __( 'Please input a Client ID before authorizing.', 'github_plugin_updater' ), 'error' );
-		}
-		if ( empty( $valid['client_secret'] ) ) {
-			add_settings_error( 'client_secret', 'no-client-secret', __( 'Please input a Client Secret before authorizing.', 'github_plugin_updater' ), 'error' );
-		}
-
-		return $valid;
-	}
-
-	/**
-	 * Add a settings link to the plugin actions
-	 *
-	 * @param array   $links Array of the plugin action links
-	 * @return array
-	 */
-	function filter_plugin_actions( $links ) {
-		$settings_link = '<a href="plugins.php?page=github-updater">' . __( 'Setup', 'github_plugin_updater' ) . '</a>';
-		array_unshift( $links, $settings_link );
-		return $links;
-	}
-
-	/**
-	 * Output the setup page
-	 *
-	 * @return none
-	 */
-	function admin_page() {
-		$this->maybe_authorize();
-?>
-		<div class="wrap ghupdate-admin">
-
-			<div class="head-wrap">
-				<?php screen_icon( 'plugins' ); ?>
-				<h2><?php _e( 'Setup GitHub Updates' , 'github_plugin_updater' ); ?></h2>
-			</div>
-
-			<div class="postbox-container primary">
-				<form method="post" id="ghupdate" action="options.php">
-					<?php
-		settings_errors();
-		settings_fields( 'ghupdate' ); // includes nonce
-		do_settings_sections( 'github-updater' );
-?>
-				</form>
-			</div>
-
-		</div>
-		<?php
-	}
-
-	public function maybe_authorize() {
-		$gh = get_option( 'ghupdate' );
-		if ( 'false' == $_GET['authorize'] || 'true' != $_GET['settings-updated'] || empty( $gh['client_id'] ) || empty( $gh['client_secret'] ) ) {
-			return;
-		}
-
-		$redirect_uri = urlencode( admin_url( 'admin-ajax.php?action=set_github_oauth_key' ) );
-
-		// Send user to GitHub for account authorization
-
-		$query = 'https://github.com/login/oauth/authorize';
-		$query_args = array(
-			'scope' => 'repo',
-			'client_id' => $gh['client_id'],
-			'redirect_uri' => $redirect_uri,
-		);
-		$query = add_query_arg( $query_args, $query );
-		wp_redirect( $query );
-
-		exit;
-
-	}
-
-	public function ajax_set_github_oauth_key() {
-		$gh = get_option( 'ghupdate' );
-
-		$query = admin_url( 'plugins.php' );
-		$query = add_query_arg( array( 'page' => 'github-updater' ), $query );
-
-		if ( isset( $_GET['code'] ) ) {
-			// Receive authorized token
-			$query = 'https://github.com/login/oauth/access_token';
-			$query_args = array(
-				'client_id' => $gh['client_id'],
-				'client_secret' => $gh['client_secret'],
-				'code' => $_GET['code'],
-			);
-			$query = add_query_arg( $query_args, $query );
-			$response = wp_remote_get( $query, array( 'sslverify' => false ) );
-			parse_str( $response['body'] ); // populates $access_token, $token_type
-
-			if ( !empty( $access_token ) ) {
-				$gh['access_token'] = $access_token;
-				update_option( 'ghupdate', $gh );
-			}
-
-			wp_redirect( admin_url( 'plugins.php?page=github-updater' ) );
-			exit;
-
-		}else {
-			$query = add_query_arg( array( 'authorize'=>'false' ), $query );
-			wp_redirect( $query );
-			exit;
-		}
-	}
-}
-add_action( 'init', create_function( '', 'global $WPGitHubUpdaterSetup; $WPGitHubUpdaterSetup = new WPGitHubUpdaterSetup();' ) );
  ?>

@@ -20,6 +20,21 @@ class NftgetListsAndNumbers{
             global $wpdb;
             return $table = $wpdb->prefix .$this->getNftPrefix(). "collect";
         }
+
+        private function getShortcodesTable(){
+            global $wpdb;
+            return $table = $wpdb->prefix .$this->getNftPrefix(). "shortcodes";
+        }
+
+        private function getAuthorTable(){
+            global $wpdb;
+            return $table = $wpdb->prefix .$this->getNftPrefix(). "author";
+        }
+
+        private function getUpdateLogTable(){
+            global $wpdb;
+            return $table = $wpdb->prefix .$this->getNftPrefix(). "update";
+        }
 /**---------------------------------------------------------------------------------------------------------------------------------------- */
 
     public function getNrOfCollectionNetworks(){
@@ -293,6 +308,99 @@ class NftgetListsAndNumbers{
             $Network->setCollectionPrice($array['collect_price']);
             $Network->setCollectionFeatured($array['collect_featured']);
             $Network->setNetworkArchive($array['archive']);
+
+            // Add new object toe return array.
+            $return_array[] = $Network;
+        }
+        return $return_array;
+    }
+
+    public function getNftShortcodes(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getShortcodesTable() ."`  ORDER BY `sid`", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Network = new NftPromoModel();
+            // Set all info
+            $Network->setShortcodeId($array['sid']);
+            $Network->setShortcodeName($array['short_name']);
+            $Network->setShortcodeDesc($array['short_desc']);
+
+            // Add new object toe return array.
+            $return_array[] = $Network;
+        }
+        return $return_array;
+    }
+
+    public function getNftAuthor(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getAuthorTable() ."`  ORDER BY `aid`", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Network = new NftPromoModel();
+            // Set all info
+            $Network->setAuthorId($array['aid']);
+            $Network->setAuthorName($array['author_name']);
+            $Network->setAuthorMail($array['author_email']);
+            $Network->setAuthorSite($array['author_website']);
+
+            // Add new object toe return array.
+            $return_array[] = $Network;
+        }
+        return $return_array;
+    }
+
+    public function getNftUpdateLog(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getUpdateLogTable() ."`  ORDER BY `uid`", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Network = new NftPromoModel();
+            // Set all info
+            $Network->setUpdateId($array['uid']);
+            $Network->setUpdateVersion($array['update_version']);
+            $Network->setUpdateDesc($array['update_desc']);
+            $Network->setUpdateList($array['update_list']);
+            $Network->setUpdateFdesc($array['future_desc']);
+
+            // Add new object toe return array.
+            $return_array[] = $Network;
+        }
+        return $return_array;
+    }
+
+    public function getNftChangeLog(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getUpdateLogTable() ."` ORDER BY `uid` DESC LIMIT 1", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Network = new NftPromoModel();
+            // Set all info
+            $Network->setUpdateId($array['uid']);
+            $Network->setUpdateVersion($array['update_version']);
+            $Network->setUpdateDesc($array['update_desc']);
+            $Network->setUpdateList($array['update_list']);
+            $Network->setUpdateFdesc($array['future_desc']);
 
             // Add new object toe return array.
             $return_array[] = $Network;
