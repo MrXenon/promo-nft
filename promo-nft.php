@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -241,7 +241,14 @@ defined( 'ABSPATH' ) OR exit;
                 <li>Dynamic loading of plugin name, changelog & author in dashboard.</li>
                 <li>Added an icon & banner to the plug-in description.</li>
                 <li>Cleaned up code</li>', 
-                'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.');";
+                'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
+                (3, 'V1.0.3','Added a generator collection form, in which the admin can generate the add-collection-page, where the add collection form with auto display so visitors can submit their own NFT.',
+                '<li>Added a Generate collection form button in the dasboard.</li>
+                <li>Added the Generate collection form to the front-end add-collection-form page.</li>
+                <li>Generate the add-collection-form page on click in dashboard.</li>
+                <li>Added NFT Listings to the backend, this displays the current listings.</li>
+                <li>Added a choice table to the database in which you can call yes or no values.</li>', 
+                'Next update will add the abillity to confirm listings.');";
             dbDelta($sql);
 		}
  }
