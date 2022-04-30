@@ -10,6 +10,24 @@ include PROMO_NFT_PLUGIN_MODEL_DIR . "/NftPromoModel.class.php";
 // Declare class variable:
 $NftPromoModel = new NftPromoModel();
 
+$base_url = get_admin_url() . 'admin.php';
+$params = array('page' => basename(__FILE__, ".php"));
+$base_url = add_query_arg($params, $base_url);
+$get_array = $NftPromoModel->getGetValues();
+
+$action = FALSE;
+if (!empty($get_array)) {
+
+    // Check actions
+    if (isset($get_array['action'])) {
+        $action = $NftPromoModel->handleGetAction($get_array);
+    }
+}
+$post_array = $NftPromoModel->getPostValues();
+
+$params = array('action' => 'generateAddCollectionForm');
+$generate_link = add_query_arg($params, $base_url);
+
 $ColNetNr   =   $NftPromoModel->getNrOfCollectionNetworks();
 $ColNr      =   $NftPromoModel->getNrOfCollections();
 $featured   =   $NftPromoModel->getNrOfFeaturedCollections();
@@ -19,6 +37,7 @@ $Shortcodes =   $NftPromoModel->getNftShortcodes();
 $Author     =   $NftPromoModel->getNftAuthor();
 $updateLog  =   $NftPromoModel->getNftUpdateLog();
 $changeLog  =   $NftPromoModel->getNftChangeLog();
+$listings   =   $NftPromoModel->getNrOfListings();
 ?>
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/css/bootstrap-extended.min.css">
@@ -152,6 +171,23 @@ $changeLog  =   $NftPromoModel->getNftChangeLog();
           </div>
         </div>
       </div>
+      <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="align-self-center">
+                  <i class="icon-graph warning font-large-2 float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h3><?=$listings;?></h3>
+                  <span>Listings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="col-xl-3 col-sm-6 col-12"> 
         <div class="card">
           <div class="card-content">
@@ -206,6 +242,19 @@ $changeLog  =   $NftPromoModel->getNftChangeLog();
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#author">
                         Author
                     </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 col-12"> 
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <div class="media d-flex">
+                <div class="media-body text-center">
+                    <a href="<?=$generate_link?>" class="btn btn-primary">Generate collection form</a>
                 </div>
               </div>
             </div>

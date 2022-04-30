@@ -6,10 +6,15 @@
  */
 add_shortcode('nft_featured_items','viewFeatured');
 add_shortcode('nft_single','viewSingle');
+add_shortcode('nft_add_collection','addCollection');
 function viewFeatured($atts, $content = NULL){
     include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftFeatured.php';
 }
 
 function viewSingle($atts, $content = NULL){
     include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftSingle.php';
+}
+
+function addCollection($atts, $content = NULL){
+    include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftAddCollection.php';
 }

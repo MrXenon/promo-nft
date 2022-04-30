@@ -4,38 +4,22 @@
  * Proprietary and confidential
  * Written by Kevin Schuit <info@kevinschuit.com>, April 2022
  */
+require_once PROMO_NFT_PLUGIN_MODEL_DIR  . '/NftTables.class.php';
 class NftgetListsAndNumbers{
-        // Define tables
-        private function getNftPrefix(){
-            return $prefix = 'nft_';
-        }
-        
-        private function getCollectionNetworkTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "colnet";
-        }
-    
-        
-        private function getCollectionsTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "collect";
-        }
 
-        private function getShortcodesTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "shortcodes";
-        }
-
-        private function getAuthorTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "author";
-        }
-
-        private function getUpdateLogTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "update";
-        }
 /**---------------------------------------------------------------------------------------------------------------------------------------- */
+    public function __construct(){
+        $this->nftTables            = new NftTables();
+    }
+    // Define tables
+    private function getNftPrefix(){return $this->nftTables->getNftPrefix();}
+    private function getCollectionNetworkTable(){return $this->nftTables->getCollectionNetworkTable();}
+    private function getCollectionsTable(){return $this->nftTables->getCollectionsTable();}
+    private function getShortcodesTable(){return $this->nftTables->getShortcodesTable();}
+    private function getAuthorTable(){return $this->nftTables->getAuthorTable();}
+    private function getUpdateLogTable(){return $this->nftTables->getUpdateLogTable();}
+    private function getChoiceTable(){return $this->nftTables->getChoiceTable(); }
+    private function getListingTable(){return $this->nftTables->getListingTable();}
 
     public function getNrOfCollectionNetworks(){
         global $wpdb;
@@ -62,6 +46,15 @@ class NftgetListsAndNumbers{
         global $wpdb;
 
         $query = "SELECT COUNT(*) AS nr FROM `". $this->getCollectionsTable()."`";
+        $result = $wpdb->get_results( $query, ARRAY_A );
+
+        return $result[0]['nr'];
+    }
+
+    public function getNrOfListings(){
+        global $wpdb;
+
+        $query = "SELECT COUNT(*) AS nr FROM `". $this->getListingTable()."`";
         $result = $wpdb->get_results( $query, ARRAY_A );
 
         return $result[0]['nr'];
@@ -127,6 +120,28 @@ class NftgetListsAndNumbers{
         return $return_array;
     }
 
+    public function getChoiceList(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getChoiceTable() ."` ORDER BY `choice_id`", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Choice = new NftPromoModel();
+            // Set all info
+            $Choice->setChoiceId($array['choice_id']);
+            $Choice->setChoice($array['choice_name']);
+            $Choice->setChoiceVar($array['choice_var']);
+
+            // Add new object toe return array.
+            $return_array[] = $Choice;
+        }
+        return $return_array;
+    }
+
     public function getCollectionNetworkArchive(){
 
         global $wpdb;
@@ -179,6 +194,40 @@ class NftgetListsAndNumbers{
 
             // Add new object toe return array.
             $return_array[] = $Network;
+        }
+        return $return_array;
+    }
+
+    public function getListings(){
+
+        global $wpdb;
+        $return_array = array();
+
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getListingTable() ."` ORDER BY `listing_id`", ARRAY_A);
+
+        // For all database results:
+        foreach ( $result_array as $idx => $array){
+        // New object
+            $Listing = new NftPromoModel();
+            // Set all info
+            $Listing->setListingId($array['listing_id']);
+            $Listing->setListingProject($array['listing_project']);
+            $Listing->setListingName($array['listing_name']);
+            $Listing->setListingEmail($array['listing_email']);
+            $Listing->setListingDescription($array['listing_desc']);
+            $Listing->setListingMintDate($array['listing_mintdate']);
+            $Listing->setListingPreSale($array['listing_presale']);
+            $Listing->setListingNetwork($array['listing_network']);
+            $Listing->setListingMinPrice($array['listing_minprice']);
+            $Listing->setListingSupply($array['listing_supply']);
+            $Listing->setListingTwitter($array['listing_twitter']);
+            $Listing->setListingDiscord($array['listing_discord']);
+            $Listing->setListingWebsite($array['listing_website']);
+            $Listing->setListingImage($array['listing_image']);
+            $Listing->setListingFeatured($array['listing_featured']);
+
+            // Add new object toe return array.
+            $return_array[] = $Listing;
         }
         return $return_array;
     }
@@ -420,6 +469,20 @@ class NftgetListsAndNumbers{
         }
         // Return array
         return $colnetName;
+    }
+
+    public function getChoiceById($id) {
+        //Calling wpdb
+        global $wpdb;
+        //Setting var as an array
+        //Database query
+        $result_array = $wpdb->get_results( "SELECT * FROM " . $this->getChoiceTable() . " WHERE  choice_var = $id", ARRAY_A );
+        // Loop through images
+        foreach ($result_array as $array) {
+            $choiceName = $array['choice_name'];
+        }
+        // Return array
+        return $choiceName;
     }
 }
 ?>

@@ -13,8 +13,6 @@ $NftPromoModel = new NftPromoModel();
 // Set base url to current file and add page specific vars
 $base_url = get_admin_url() . 'admin.php';
 $params = array('page' => basename(__FILE__, ".php"));
-$pageColnet     = 'nft_colnet';
-$pageCollect    = 'nft_collections';
 
 // Add params to base url
 $base_url = add_query_arg($params, $base_url);
@@ -70,8 +68,6 @@ if (!empty($get_array['action'] == 'publish')) {
 
 <div class="container">
     <div class="mt-4">
-        <button class="btn btn-primary" id="displayNetworkTable">Display Network table</button>
-        <button class="btn btn-primary" id="displayCollectionsTable">Display Collections table</button>
     </div>
 
     <?php
@@ -95,71 +91,22 @@ if (!empty($get_array['action'] == 'publish')) {
     echo(($action == 'update') ? '<form action="' . $base_url . '" method="post">' : '');
     ?>
 <div class="table-responsive">
-    <table class="table table-light table-hover collapse" id="networkDiv">
+    <table class="table table-light table-hover" id="collectionsDiv">
         <thead>
         <tr>
-            <th width="200">Network name</th>
-            <th width="1500">Network description</th>
-            <th width="100" colspan="2">Actions</th>
-        </tr>
-        </thead>
-        <!-- <tr><td colspan="3">Event types rij 1</td></tr> -->
-        <?php
-        //*
-        if ($NftPromoModel->getNrOfCollectionNetworks() < 1) {
-            ?>
-        <p class='alert alert-warning'>There are no collection network items yet!</p>
-        <?php } else {
-            $type_list = $NftPromoModel->getCollectionNetworkArchive();
-
-            //** Show all event types in the tabel
-            foreach ($type_list as $NftPromoModel_obj) {
-
-                // Create update link
-                $params = array('action' => 'update', 'id' => $NftPromoModel_obj->getNetworkId());
-                $upd_link = add_query_arg($params, $base_url);
-                
-                // Create archive link
-                $params = array('action' => 'publish', 'id' => $NftPromoModel_obj->getNetworkId(), 'p' => $pageColnet);
-                $pub_link = add_query_arg($params, $base_url);
-
-                // Create delete link
-                $params = array('action' => 'delete', 'id' => $NftPromoModel_obj->getNetworkId(), 'p' => $pageColnet);
-                $del_link = add_query_arg($params, $base_url);
-                ?>
-
-                <tr>
-                        <td width="180"><?= $NftPromoModel_obj->getNetworkName(); ?></td>
-                        <td width="200"><?= $NftPromoModel_obj->getNetworkDescription(); ?></td>
-                        <?php if ($action !== 'update') {
-                            // If action is update don’t show the action button
-                            ?>
-                            <td><a href="<?= $pub_link; ?>" onclick="return confirm('Are you sure you want to publish this network, by doing so this network will be returned to the network records.?');"><div class="nftIconAdminArchive" data-toggle="tooltip" data-placement="bottom" title="Publish"></div></a></td>
-                            <td><a href="<?= $del_link; ?>" onclick="return confirm('Are you sure you want to permanently delete this network?');"><div class="nftIconAdminX" data-toggle="tooltip" data-placement="bottom" title="Delete"></div></a></td>
-                            <?php
-                        } // if action !== update
-                        ?>
-                    <?php } // if acton !== update ?>
-                </tr>
-                <?php
-            }
-            ?>
-    </table>
-</div>
-<div class="table-responsive">
-    <table class="table table-light table-hover collapse" id="collectionsDiv">
-        <thead>
-        <tr>
-            <th width="200">Title</th>
+            <th width="200">Project</th>
+            <th width="200">Name</th>
+            <th width="200">Email</th>
             <th width="500">Description</th>
-            <th width="200">Date</th>
-            <th width="200">Predate</th>
+            <th width="200">Mintdate</th>
+            <th width="200">Presale</th>
             <th width="200">Network</th>
+            <th width="200">Price</th>
             <th width="200">Supply</th>
-            <th width="200">Site</th>
             <th width="200">Twitter</th>
             <th width="200">Discord</th>
-            <th width="200">Price</th>
+            <th width="200">Website</th>
+            <th width="200">Image</th>
             <th width="200">Featured</th>
             <th width="100" colspan="2">Actions</th>
         </tr>
@@ -167,44 +114,51 @@ if (!empty($get_array['action'] == 'publish')) {
         <!-- <tr><td colspan="3">Event types rij 1</td></tr> -->
         <?php
         //*
-        if ($NftPromoModel->getNrOfCollections() < 1) {
+        if ($NftPromoModel->getNrOfListings() < 1) {
             ?>
-        <p class='alert alert-warning'>There are no collection network items yet!</p>
+        <p class='alert alert-warning'>There are no listings yet!</p>
         <?php } else {
-            $col_list = $NftPromoModel->getCollectionArchive();
+            $col_list = $NftPromoModel->getListings();
             //** Show all event types in the tabel
             foreach ($col_list as $NftCol_obj) {
 
                 // Create update link
-                $params = array('action' => 'update', 'id' => $NftCol_obj->getCollectionId());
+                $params = array('action' => 'update', 'id' => $NftCol_obj->getListingId());
                 $upd_link = add_query_arg($params, $base_url);
                 
                 // Create archive link
-                $params = array('action' => 'publish', 'id' => $NftCol_obj->getCollectionId(),'p' => $pageCollect);
+                $params = array('action' => 'publish', 'id' => $NftCol_obj->getListingId());
                 $pub_link = add_query_arg($params, $base_url);
 
                 // Create delete link
-                $params = array('action' => 'delete', 'id' => $NftCol_obj->getCollectionId(),'p' => $pageCollect);
+                $params = array('action' => 'delete', 'id' => $NftCol_obj->getListingId());
                 $del_link = add_query_arg($params, $base_url);
                 ?>
-
                 <tr>
-                        <td width="180"><?= $NftCol_obj->getCollectionTitle(); ?></td>
-                        <td width="200"><?= mb_strimwidth($NftCol_obj->getCollectionDescription(), 0, 150, '...'); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionDate(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionPreDate(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingProject(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingName(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingEmail(); ?></td>
+                        <td width="500"><?= mb_strimwidth($NftCol_obj->getListingDescription(), 0, 150, '...'); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingMintDate(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingPreSale(); ?></td>
                         <td width="200"><?php 
-                            $id = $NftCol_obj->getCollectionNetwork();
+                            $id = $NftCol_obj->getListingNetwork();
                             if(($NftCol_obj->getNetworkById($id)) == '') {
                             }else {
                                 echo($NftCol_obj->getNetworkById($id));
                             } ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionSupply(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionSite(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionTwitter(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionDiscord(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionPrice(); ?></td>
-                        <td width="200"><?= $NftCol_obj->getCollectionFeatured(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingMinPrice(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingSupply(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingTwitter(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingDiscord(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingWebsite(); ?></td>
+                        <td width="200"><?= $NftCol_obj->getListingImage(); ?></td>
+                        <td width="200"><?php 
+                            $id = $NftCol_obj->getListingFeatured();
+                            if(($NftCol_obj->getChoiceById($id)) == '') {
+                            }else {
+                                echo($NftCol_obj->getChoiceById($id));
+                            } ?></td>
                         <?php if ($action !== 'update') {
                             // If action is update don’t show the action button
                             ?>
@@ -225,13 +179,3 @@ if (!empty($get_array['action'] == 'publish')) {
     echo(($action == 'update') ? '</form>' : '');
 ?>
 </div>
-<script>
-$(document).ready(function(){
-    $("#displayCollectionsTable").click(function(){
-        $('#collectionsDiv').toggleClass('show');
-    });
-    $("#displayNetworkTable").click(function(){
-        $('#networkDiv').toggleClass('show');
-    });
-});
-</script>

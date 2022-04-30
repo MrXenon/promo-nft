@@ -66,14 +66,6 @@
   border: 2px solid #963cbd;
 }
 
-.btn-purple:hover {
-  background-color: rgba(133, 0, 217, 0.8);
-  -webkit-box-shadow: none;
-          box-shadow: none;
-  -webkit-transition: .8s;
-  transition: .8s;
-}
-
 .bottom {
   position: relative;
   bottom: 0px;
@@ -143,8 +135,14 @@
 
 .btn-purple {
   color: #ffffff;
-  background-color: #963cbd;
-  border-color: #963cbd;
+  background-color: #963cbd !important;
+  border-color: #963cbd !important;
+}
+
+.btn-purple:hover {
+  color: #ffffff;
+  background-color: rgba(133, 0, 217, 0.8) !important;
+  border-color: rgba(133, 0, 217, 0.8) !important;
 }
 
 .bg-nft-dark {
@@ -157,6 +155,67 @@
 
 .customLineHeight {
   line-height: 2;
+}
+
+.nft-form label {
+  color: #b6dbc5;
+  font-size: 16px;
+}
+
+.nft-form input, .nft-form select {
+  padding: 1rem 22px;
+  font-size: 16px;
+  letter-spacing: -0.011em;
+  border-radius: 16px;
+  line-height: 1.23536;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  border: 1px solid transparent;
+}
+
+.nft-form input:hover, .nft-form input:focus, .nft-form textarea:hover, .nft-form textarea:focus, .nft-form .select2-container--default .select2-selection--single:hover,
+.nft-form .select2-container--default .select2-selection--single:focus {
+  border-color: #454f5d !important;
+}
+
+.nft-form input, .nft-form textarea, .nft-form select {
+  padding: 0.75rem 1rem;
+  font-size: 16px;
+  letter-spacing: -0.011em;
+  color: #ffffff;
+}
+
+.nft-form input, .nft-form textarea, .nft-form .select2-container--default .select2-selection--single, .nft-form select {
+  -webkit-transition: all .3s ease;
+  transition: all .3s ease;
+  background: #1c222b;
+}
+
+.nft-form label, .nft-form textarea, .nft-form input {
+  min-width: 100%;
+  max-width: 100%;
+}
+
+.nft-form textarea {
+  overflow: auto;
+  resize: vertical;
+}
+
+.nft-form textarea {
+  border-radius: 6px;
+  padding: 22px;
+  line-height: 1.23536;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  border: 1px solid transparent;
+}
+
+.nft-form .row {
+  margin: 20px 0;
+}
+
+.nft-form select {
+  width: 100%;
 }
 
 .nftIconAdminCheck {

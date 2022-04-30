@@ -110,6 +110,8 @@ defined( 'ABSPATH' ) OR exit;
 		 $shortcodes		=	 $wpdb->prefix . "nft_shortcodes";
 		 $author			=	 $wpdb->prefix . "nft_author";
 		 $updateLog			=	 $wpdb->prefix . "nft_update";
+         $listings          =    $wpdb->prefix . "nft_listings";
+         $choice            =    $wpdb->prefix . "nft_choice";
 
          $sql = "CREATE TABLE IF NOT EXISTS $colnet (
             colnet_id BIGINT(11) NOT NULL AUTO_INCREMENT,
@@ -120,6 +122,8 @@ defined( 'ABSPATH' ) OR exit;
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
 
+         $wpdb->query("DROP TABLE $shortcodes");
+
 		 $sql = "CREATE TABLE IF NOT EXISTS $shortcodes (
             sid BIGINT(11) NOT NULL AUTO_INCREMENT,
             short_name VARCHAR(64) NOT NULL,
@@ -127,6 +131,8 @@ defined( 'ABSPATH' ) OR exit;
             PRIMARY KEY  (sid))
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
+
+         $wpdb->query("DROP TABLE $author");
 
 		 $sql = "CREATE TABLE IF NOT EXISTS $author (
             aid BIGINT(11) NOT NULL AUTO_INCREMENT,
@@ -150,6 +156,16 @@ defined( 'ABSPATH' ) OR exit;
             ENGINE = InnoDB $charset_collate";
         dbDelta($sql);    
 
+        $wpdb->query("DROP TABLE $choice");
+
+        $sql = "CREATE TABLE IF NOT EXISTS $choice (
+            choice_id BIGINT(11) NOT NULL AUTO_INCREMENT,
+            choice_name VARCHAR(64) NOT NULL,
+            choice_var VARCHAR(1) NOT NULL,
+            PRIMARY KEY  (choice_id))
+            ENGINE = InnoDB $charset_collate";
+        dbDelta($sql);    
+
          $sql = "CREATE TABLE IF NOT EXISTS $collect (
             collect_id BIGINT(11) NOT NULL AUTO_INCREMENT,
             collect_img VARCHAR(255) NOT NULL,
@@ -169,37 +185,64 @@ defined( 'ABSPATH' ) OR exit;
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
 
-		 $sql = "INSERT INTO `$shortcodes` (`sid`, `short_name`,`short_desc`) VALUES
-		(1, '[nft_featured_items]','This shortcode displays the featured items. Include this on your page in order to display the featured content.'),
-		(2, '[nft_single]','This shortcode displays the single page content, this shortcode is automaticly included on each page, created when adding a new network.');";
-			dbDelta($sql);
+         $sql = "CREATE TABLE IF NOT EXISTS $listings (
+            listing_id BIGINT(11) NOT NULL AUTO_INCREMENT,
+            listing_project VARCHAR(255) NOT NULL,
+            listing_name VARCHAR(255) NOT NULL,
+            listing_email VARCHAR(255) NOT NULL,
+            listing_desc VARCHAR(1024) NOT NULL,
+            listing_mintdate DATETIME NOT NULL,
+            listing_presale DATE NOT NULL,
+            listing_network BIGINT(11) NOT NULL,
+            listing_minprice VARCHAR(255) NOT NULL,
+            listing_supply INT(11) NOT NULL,
+            listing_twitter VARCHAR(255) NOT NULL,
+            listing_discord VARCHAR(255) NOT NULL,
+            listing_website VARCHAR(255) NOT NULL,
+            listing_image VARCHAR(255) NOT NULL,
+            listing_featured VARCHAR(1) NOT NULL,
+            PRIMARY KEY  (listing_id))
+            ENGINE = InnoDB $charset_collate";
+         dbDelta($sql);
+
+		$sql = "INSERT INTO `$shortcodes` (`sid`, `short_name`,`short_desc`) VALUES
+            (1, '[nft_featured_items]','This shortcode displays the featured items. Include this on your page in order to display the featured content.'),
+            (2, '[nft_single]','This shortcode displays the single page content, this shortcode is automaticly included on each page, created when adding a new network.'),
+            (3, '[nft_add_collection]','This shortcode displays the form in which people can submit their own collection');";
+        dbDelta($sql);
+
+        $sql = "INSERT INTO `$choice` (`choice_id`, `choice_name`,`choice_var`) VALUES
+            (1, 'Yes','1'),
+            (2, 'No','0');";
+        dbDelta($sql);
+        
 
 		$sql = "INSERT INTO `$author` (`aid`, `author_name`,`author_email`,`author_website`) VALUES
-		(1, 'Kevin Schuit','info@kevinschuit.com','https://kevinschuit.com');";
-			dbDelta($sql);
+		    (1, 'Kevin Schuit','info@kevinschuit.com','https://kevinschuit.com');";
+		dbDelta($sql);
 
             $sql = "INSERT INTO `$updateLog` (`uid`, `update_version`,`update_desc`,`update_list`,`future_desc`) VALUES
-            (1, 'V1.0.1','Base version of the Promo NFT plug-in. This plug-in makes it available for the user to create new NFT networks, create new NFT collection, archive and publish these networks and collections and display them on the front-end by using a shortcode, which is issued by the plug-in itself.',
-            '<li>Create a network.</li><li>Create a NFT collection.</li>
-            <li>Archive a network.</li>
-            <li>Archive a NFT collection.</li>
-            <li>Publish a network.</li>
-            <li>Publish a NFT collection.</li>
-            <li>Update a network.</li>
-            <li>Update a NFT collection.</li>
-            <li>Delete a network when archived.</li>
-            <li>Delete a NFT collection when archived.</li>
-            <li>Sorted display on the front-end, between archived items and published items.</li>
-            <li>Display featured items.</li>
-            <li>Display a NFT collecton on their respective page.</li>', 
-            'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
-            (2, 'V1.0.2','Updates to the backend of the system, cleaned out some redundant code and initialized data on plug-in installation, which is used throughout the system',
-            '<li>Added a support form for the site owner.</li>
-            <li>Dynamic loading of plugin name, changelog & author in dashboard.</li>
-            <li>Added an icon & banner to the plug-in description.</li>
-            <li>Cleaned up code</li>', 
-            'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.');";
-                dbDelta($sql);
+                (1, 'V1.0.1','Base version of the Promo NFT plug-in. This plug-in makes it available for the user to create new NFT networks, create new NFT collection, archive and publish these networks and collections and display them on the front-end by using a shortcode, which is issued by the plug-in itself.',
+                '<li>Create a network.</li><li>Create a NFT collection.</li>
+                <li>Archive a network.</li>
+                <li>Archive a NFT collection.</li>
+                <li>Publish a network.</li>
+                <li>Publish a NFT collection.</li>
+                <li>Update a network.</li>
+                <li>Update a NFT collection.</li>
+                <li>Delete a network when archived.</li>
+                <li>Delete a NFT collection when archived.</li>
+                <li>Sorted display on the front-end, between archived items and published items.</li>
+                <li>Display featured items.</li>
+                <li>Display a NFT collecton on their respective page.</li>', 
+                'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
+                (2, 'V1.0.2','Updates to the backend of the system, cleaned out some redundant code and initialized data on plug-in installation, which is used throughout the system',
+                '<li>Added a support form for the site owner.</li>
+                <li>Dynamic loading of plugin name, changelog & author in dashboard.</li>
+                <li>Added an icon & banner to the plug-in description.</li>
+                <li>Cleaned up code</li>', 
+                'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.');";
+            dbDelta($sql);
 		}
  }
  $promo_nft = new PromoNft();

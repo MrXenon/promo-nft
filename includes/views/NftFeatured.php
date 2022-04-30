@@ -5,7 +5,7 @@
  * Written by Kevin Schuit <info@kevinschuit.com>, April 2022
  */
 
-include PROMO_NFT_PLUGIN_MODEL_DIR . "/NftPromoModel.class.php";
+include_once PROMO_NFT_PLUGIN_MODEL_DIR . "/NftPromoModel.class.php";
 // Declare class variable:
 $NftPromoModel = new NftPromoModel();
 

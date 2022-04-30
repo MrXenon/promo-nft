@@ -4,22 +4,20 @@
  * Proprietary and confidential
  * Written by Kevin Schuit <info@kevinschuit.com>, April 2022
  */
+require_once PROMO_NFT_PLUGIN_MODEL_DIR  . '/NftTables.class.php';
 class NftSaveUploadDelete{
-        // Define tables
-        private function getNftPrefix(){
-            return $prefix = 'nft_';
-        }
-        
-        private function getCollectionNetworkTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "colnet";
-        }
-    
-        
-        private function getCollectionsTable(){
-            global $wpdb;
-            return $table = $wpdb->prefix .$this->getNftPrefix(). "collect";
-        }
+    public function __construct(){
+        $this->nftTables            = new NftTables();
+    }
+    // Define tables
+    private function getNftPrefix(){return $this->nftTables->getNftPrefix();}
+    private function getCollectionNetworkTable(){return $this->nftTables->getCollectionNetworkTable();}
+    private function getCollectionsTable(){return $this->nftTables->getCollectionsTable();}
+    private function getShortcodesTable(){return $this->nftTables->getShortcodesTable();}
+    private function getAuthorTable(){return $this->nftTables->getAuthorTable();}
+    private function getUpdateLogTable(){return $this->nftTables->getUpdateLogTable();}
+    private function getChoiceTable(){return $this->nftTables->getChoiceTable(); }
+    private function getListingTable(){return $this->nftTables->getListingTable();}
 /**---------------------------------------------------------------------------------------------------------------------------------------- */
 
     public function save($input_array){
@@ -45,6 +43,50 @@ class NftSaveUploadDelete{
                     $input_array['CollectionName'],
                     $input_array['CollectionDescription'],
                     $input_array['archive']) );
+                // Error ? It's in there:
+                if ( !empty($wpdb->last_error) ){
+                    return FALSE;
+                }
+
+            } catch (Exception $exc) {
+                // @todo: Add error handling
+                echo '<p class="alert alert-warning">'. $exc->getMessage() .'</p>';
+            }
+        return TRUE;
+        }elseif($input_array['p'] == 'add-your-collection'){
+            try {
+                $array_fields = array( 'projectProjectName', 'projectName','projectEmail','projectPreSaleDate','projectNetwork',
+                'projectMintPrice','projectSupply','projectTwitter','projectDiscord','projectWebsite','projectImage','projectFeatured');
+                $data_array = array();
+    
+                foreach( $array_fields as $field){
+    
+                    if (!isset($input_array[$field])){
+                        throw new Exception(__("$field is mandatory."));
+                    }
+                    $data_array[] = $input_array[$field];
+                }
+
+                global $wpdb;
+
+                $wpdb->query($wpdb->prepare("INSERT INTO `". $this->getListingsTable()
+                    ."` ( `listing_project`,`listing_name`, `listing_email`,`listing_desc`,`listing_mintdate`,`listing_presale`,`listing_network`,
+                    `listing_minprice`,`listing_supply`,`listing_twitter`,`listing_discord`,`listing_website`,`listing_image`,`listing_featured`)".
+                    " VALUES ( '%s', '%s','%s','%s','%s','%s','%d','%s','%d','%s','%s','%s','%s','%s');",
+                    $input_array['projectProjectName'],
+                    $input_array['projectName'],
+                    $input_array['projectEmail'],
+                    $input_array['projectDescription'],
+                    $input_array['projectMintDate'],
+                    $input_array['projectPreSaleDate'],
+                    $input_array['projectNetwork'],
+                    $input_array['projectMintPrice'],
+                    $input_array['projectSupply'],
+                    $input_array['projectTwitter'],
+                    $input_array['projectDiscord'],
+                    $input_array['projectWebsite'],
+                    $input_array['projectImage'],
+                    $input_array['projectFeatured']) );
                 // Error ? It's in there:
                 if ( !empty($wpdb->last_error) ){
                     return FALSE;
@@ -419,6 +461,25 @@ public function create_page($input_array)
     }
 }
 
+public function generateAddCollectionForm(){
+    if (!current_user_can('activate_plugins')) return;
+    global $wpdb;
+
+    if (null === $wpdb->get_row("SELECT post_name FROM {$wpdb->prefix}posts WHERE post_name = 'add-your-collection'", 'ARRAY_A')) {
+
+        $current_user = wp_get_current_user();
+        $page = array(
+            'post_title' => __('Add your collection'),
+            'post_content' => '[nft_add_collection]',
+            'post_status' => 'publish',
+            'post_author' => $current_user->ID,
+            'post_type' => 'page',
+        );
+        wp_insert_post($page);
+    }
+
+}
+
 public function delete_page($input_array)
 {
     if (!current_user_can('activate_plugins')) return;
@@ -441,6 +502,8 @@ public function delete_page($input_array)
             'p' => array('filter' => FILTER_SANITIZE_STRING ),
 
             'colnetName' => array('filter' => FILTER_SANITIZE_STRING ),
+
+            'generateAddCollectionForm' => array('filter' => FILTER_SANITIZE_STRING ),
 
             //Id of current row
             'id' => array('filter' => FILTER_VALIDATE_INT ));
@@ -489,6 +552,11 @@ public function delete_page($input_array)
                 }
                 $action = 'publish';
                 break;
+
+            case 'generateAddCollectionForm':
+                $this->generateAddCollectionForm();
+               $action = 'generateAddCollectionForm';
+               break;
 
             default:
                 // Oops

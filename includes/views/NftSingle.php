@@ -4,7 +4,7 @@
  * Proprietary and confidential
  * Written by Kevin Schuit <info@kevinschuit.com>, April 2022
  */
-include PROMO_NFT_PLUGIN_MODEL_DIR . "/NftPromoModel.class.php";
+include_once PROMO_NFT_PLUGIN_MODEL_DIR . "/NftPromoModel.class.php";
 $NftPromoModel = new NftPromoModel();
 $page = basename(get_the_title(), 'Drops');
 $pageId = $NftPromoModel->getColnetId($page);
