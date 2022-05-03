@@ -43,6 +43,8 @@ class NftPostValues{
             'projectFeatured'       => array('filter' => FILTER_SANITIZE_STRING ),
             /**Pagename */
             'p'                     => array('filter' => FILTER_SANITIZE_STRING ),
+            /**Delete file */
+            'deleted'               => array('filter' => FILTER_VALIDATE_INT ),
             /**NFT global ID value*/
             'id'                    => array( 'filter'=> FILTER_VALIDATE_INT    ),
         );

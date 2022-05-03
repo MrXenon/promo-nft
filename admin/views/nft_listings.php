@@ -13,7 +13,7 @@ $NftPromoModel = new NftPromoModel();
 // Set base url to current file and add page specific vars
 $base_url = get_admin_url() . 'admin.php';
 $params = array('page' => basename(__FILE__, ".php"));
-
+$page = 'nft_listings';
 // Add params to base url
 $base_url = add_query_arg($params, $base_url);
 
@@ -34,6 +34,28 @@ if (!empty($get_array)) {
 // Get the POST data in filtered array
 $post_array = $NftPromoModel->getPostValues();
 
+// Collect Errors
+$error = FALSE;
+// Check the POST data
+if (!empty($post_array['id'])) {
+
+    // Check the add form:
+    $add = FALSE;
+    $target_file = $post_array['CollectionImage'];
+        $result = $NftPromoModel->save($post_array,$target_file);
+        if($result){
+            $add = TRUE;
+            $listing = $NftPromoModel->archive($post_array);
+            if($listing){
+                $listingMsg = TRUE;
+            }else{
+                $listingMsg = FALSE;
+            }
+        }else{
+            $add = FALSE;
+        }
+}
+
 if (!empty($get_array['action'] == 'delete')) {
 
     // Check the add form:
@@ -48,21 +70,6 @@ if (!empty($get_array['action'] == 'delete')) {
         $del = FALSE;
     }
 }
-
-if (!empty($get_array['action'] == 'publish')) {
-
-    // Check the add form:
-    $archive = FALSE;
-    // Save event types
-    $result = $NftPromoModel->publish($post_array);
-    if ($result) {
-        // Save was succesfull
-        $archive = TRUE;
-    } else {
-        // Indicate error
-        $archive = FALSE;
-    }
-}
 ?>
 
 
@@ -72,21 +79,16 @@ if (!empty($get_array['action'] == 'publish')) {
 
     <?php
     if (isset($add)) {
-        echo($add ? "<p class='mt-5 alert alert-success'>Network ".$_POST['CollectionName']." has been added.</p>" : "<p class='mt-5 alert alert-danger'>Network could not be added.</p>");
+        echo($add ? "<p class='mt-5 alert alert-success'>Listing ".$_POST['CollectionName']." has been added to the NFT collections.</p>" : "<p class='mt-5 alert alert-danger'>Listing could not be saved as NFT collection.</p>");
     }
 
-    if (isset($update)) {
-        echo($update ? "<p class='mt-5 alert alert-success'>Network ".$_POST['CollectionName']." has been updated.</p>" : "<p class='mt-5 alert alert-danger'>Network could not be updated.</p>");
+    if (isset($listingMsg)) {
+        echo($listingMsg ? "<p class='mt-5 alert alert-success'>Listing ".$_POST['CollectionName']." has been deleted from queue.</p>" : "<p class='mt-5 alert alert-danger'>Listing could not be deleted from the queue.</p>");
     }
 
     if (isset($del)) {
-        echo($del ? "<p class='mt-5 alert alert-success'>Network ".$_POST['CollectionName']." has been permanently deleted.</p>" : "<p class='mt-5 alert alert-danger'>Network could not be deleted.</p>");
+        echo($del ? "<p class='mt-5 alert alert-success'>Listing ".$_POST['CollectionName']." has been permanently deleted.</p>" : "<p class='mt-5 alert alert-danger'>Listing could not be deleted.</p>");
     }
-
-    if (isset($archive)) {
-        echo($archive ? "<p class='mt-5 alert alert-success'>Network ".$_POST['CollectionName']." has been published.</p>" : "<p class='mt-5 alert alert-danger'>Network could not be published.</p>");
-    }
-
     // Check if action == update : then start update form
     echo(($action == 'update') ? '<form action="' . $base_url . '" method="post">' : '');
     ?>
@@ -125,13 +127,9 @@ if (!empty($get_array['action'] == 'publish')) {
                 // Create update link
                 $params = array('action' => 'update', 'id' => $NftCol_obj->getListingId());
                 $upd_link = add_query_arg($params, $base_url);
-                
-                // Create archive link
-                $params = array('action' => 'publish', 'id' => $NftCol_obj->getListingId());
-                $pub_link = add_query_arg($params, $base_url);
 
                 // Create delete link
-                $params = array('action' => 'delete', 'id' => $NftCol_obj->getListingId());
+                $params = array('action' => 'delete', 'id' => $NftCol_obj->getListingId(), 'p' => $page);
                 $del_link = add_query_arg($params, $base_url);
                 ?>
                 <tr>
@@ -162,8 +160,31 @@ if (!empty($get_array['action'] == 'publish')) {
                         <?php if ($action !== 'update') {
                             // If action is update don’t show the action button
                             ?>
-                            <td><a href="<?= $pub_link; ?>" onclick="return confirm('Are you sure you want to publish this collection, by doing so this collection will be returned to the collection records.?');"><div class="nftIconAdminArchive" data-toggle="tooltip" data-placement="bottom" title="Publish"></div></a></td>
+                            <?php  $id = $NftCol_obj->getListingFeatured();
+                            if(($NftCol_obj->getChoiceById($id)) == '') {
+                            }else {
+                               $choice = $NftCol_obj->getChoiceById($id);
+                            } ?>
+                            <form action="<?=$base_url;?>" id="submitListing" method="post">
+                                <input type="hidden" name="CollectionName" value="<?= $NftCol_obj->getListingProject(); ?>">
+                                <input type="hidden" name="CollectionDate" value="<?= $NftCol_obj->getListingMintDate(); ?>">
+                                <input type="hidden" name="CollectionPredate" value="<?= $NftCol_obj->getListingPreSale(); ?>">
+                                <input type="hidden" name="CollectionNetId" value="<?= $NftCol_obj->getListingNetwork();?>">
+                                <input type="hidden" name="CollectionSupply" value="<?= $NftCol_obj->getListingSupply(); ?>">
+                                <input type="hidden" name="CollectionPrice" value="<?= $NftCol_obj->getListingMinPrice(); ?>">
+                                <input type="hidden" name="CollectionSite" value="<?= $NftCol_obj->getListingWebsite(); ?>">
+                                <input type="hidden" name="CollectionTwitter" value="<?= $NftCol_obj->getListingTwitter(); ?>">
+                                <input type="hidden" name="CollectionDiscord" value="<?= $NftCol_obj->getListingDiscord(); ?>">
+                                <input type="hidden" name="CollectionFeatured" value="<?=$NftCol_obj->getListingFeatured()?>">
+                                <input type="hidden" name="CollectionImage" value="<?= $NftCol_obj->getListingImage(); ?>">
+                                <input type="hidden" name="CollectionDescription" value="<?= $NftCol_obj->getListingDescription(); ?>">
+                                <input type="hidden" name="archive" value="False">
+                                <input type="hidden" name="id" value="<?= $NftCol_obj->getListingId();?>">
+                                <input type="hidden" name="deleted" value="1">
+                                <input type="hidden" name="p" value="<?=$page;?>">
+                            <td><a href="javascript:{}" onclick="document.getElementById('submitListing').submit();"><div class="nftIconAdminArchive" data-toggle="tooltip" data-placement="bottom" title="Publish"></div></a></td>
                             <td><a href="<?= $del_link; ?>" onclick="return confirm('Are you sure you want to permanently delete this collection?');"><div class="nftIconAdminX" data-toggle="tooltip" data-placement="bottom" title="Delete"></div></a></td>
+                        </form>
                             <?php
                         } // if action !== update
                         ?>

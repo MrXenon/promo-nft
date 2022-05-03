@@ -43,9 +43,10 @@ if (!empty($post_array['add'])) {
     // Check the add form:
     $add = FALSE;
     // Save event types
-    $upload = $NftPromoModel->ImageUpload();
+    list($upload,$target_file) = $NftPromoModel->ImageUpload();
+    $target_file = $target_file[1];
     if ($upload == 1) {
-        $result = $NftPromoModel->save($post_array);
+        $result = $NftPromoModel->save($post_array,$target_file);
         $uploadAdd = TRUE;
         if($result){
             $add = TRUE;
@@ -58,7 +59,7 @@ if (!empty($post_array['add'])) {
     }
 }
 
-if (!empty($post_array['update'])) {
+if (!empty($post_array['HTTP_HOST'])) {
 
     // Check the add form:
     $update = FALSE;
@@ -106,6 +107,7 @@ if (!empty($get_array['action'] == 'archive')) {
 $Network_list = $NftPromoModel->getCollectionNetworkList();
 $type_list = $NftPromoModel->getCollectionList();
 
+var_dump($post_array);
 ?>
 
 
@@ -143,7 +145,7 @@ $type_list = $NftPromoModel->getCollectionList();
             <div class="row mb-5 collapse" id="formDiv">
                 <form class="row g-3 needs-validation" method="post" action="<?=$base_url;?>" validate enctype="multipart/form-data">
                     <div class="col-md-4 position-relative">
-                        <input type="hidden" name="archive" value="false">
+                        <input type="hidden" name="archive" value="False">
                         <input type="hidden" name="p" value="<?=$page;?>">
                         <label for="validationCustom01" class="form-label">Title:</label>
                         <input type="text" class="form-control" maxlength="64" name="CollectionName" id="validationCustom01" placeholder="" required>
@@ -242,7 +244,8 @@ $type_list = $NftPromoModel->getCollectionList();
                     </div>
                     <div class="col-md-2 position-relative">
                         <label for="validationCustom01" class="form-label">Featured:</label>
-                            <input class="form-check-input" name="CollectionFeatured" type="checkbox" id="">
+                        <input type="hidden" name="CollectionFeatured" value="0">
+                            <input class="form-check-input" name="CollectionFeatured" type="checkbox" id="" value="1">
                         <div class="valid-feedback">
                         Looks good!
                         </div>
@@ -252,7 +255,7 @@ $type_list = $NftPromoModel->getCollectionList();
                     </div>
                     <div class="col-md-6 position-relative">
                         <div class="input-group">
-                            <input type="file" name="fileToUpload" class="form-control customLineHeight" id="inputGroupFile02" value=""
+                            <input type="file" name="fileToUpload" class="form-control customLineHeight" id="inputGroupFile02"
                             onchange="document.getElementById('image').value = this.value.split('\\').pop().split('/').pop()">
                             <input type="hidden" class="form-control" readonly id="image" name="CollectionImage" value="">
                             <input type="hidden" class="form-control" readonly id="imageCheck" name="imageCheck" value="">
@@ -335,7 +338,7 @@ $type_list = $NftPromoModel->getCollectionList();
                 <div class="row">
                     <div class="col-md-4 position-relative">
                             <input type="hidden" name="id" value="<?=$NftPromoModel_obj->getCollectionId();?>">
-                            <input type="hidden" name="archive" value="0">
+                            <input type="hidden" name="archive" value="False">
                             <input type="hidden" name="p" value="<?=$page;?>">
                             <label for="validationCustom01" class="form-label">Title:</label>
                             <input type="text" class="form-control" maxlength="64" name="CollectionName" id="validationCustom01" value="<?=$NftPromoModel_obj->getCollectionTitle();?>"required>
@@ -440,7 +443,8 @@ $type_list = $NftPromoModel->getCollectionList();
                         </div>
                         <div class="col-md-2 position-relative">
                             <label for="validationCustom01" class="form-label">Featured:</label>
-                                <input class="form-check-input" name="CollectionFeatured" type="checkbox" id="" <?php if($NftPromoModel_obj->getCollectionFeatured() == 'on'){echo 'checked';}else {} ?>>
+                                <input type="hidden" name="CollectionFeatured" value="0">
+                                <input class="form-check-input" name="CollectionFeatured" type="checkbox" id="" <?php if($NftPromoModel_obj->getCollectionFeatured() == '1'){echo ' checked ';}else {} ?> value="1">
                             <div class="valid-feedback">
                             Looks good!
                             </div>
@@ -495,7 +499,8 @@ $type_list = $NftPromoModel->getCollectionList();
                         <a href="<?= $NftPromoModel_obj->getCollectionTwitter(); ?>"><div class="nftIconTwitterBack"></div></a>
                         <a href="<?= $NftPromoModel_obj->getCollectionDiscord(); ?>"><div class="nftIconDiscordBack"></div></a></td>
                         <td width="200"><?= $NftPromoModel_obj->getCollectionPrice(); ?></td>
-                        <td width="200"><?= $NftPromoModel_obj->getCollectionFeatured(); ?></td>
+                        <?php $checkedVal =  $NftPromoModel_obj->getCollectionFeatured() ?>
+                        <td width="200"><?php if($checkedVal == '1'){echo 'Yes';}else{echo 'No';}?></td>
                         <?php if ($action !== 'update') {
                             // If action is update don’t show the action button
                             ?>

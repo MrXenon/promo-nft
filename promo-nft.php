@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -34,6 +34,7 @@ defined( 'ABSPATH' ) OR exit;
          $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
          check_admin_referer( "activate-plugin_{$plugin}" );
          PromoNft::createDb();
+         PromoNft::createImageDirectory();
      }
      public static function on_deactivation()
      {
@@ -42,6 +43,12 @@ defined( 'ABSPATH' ) OR exit;
          $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
          check_admin_referer( "deactivate-plugin_{$plugin}" );
 
+     }
+
+     public static function createImageDirectory(){
+        if ( ! is_dir( ABSPATH . 'wp-content/uploads/promo-nft-images' ) ) {
+            wp_mkdir_p( ABSPATH . 'wp-content/uploads/promo-nft-images' );
+          }
      }
 
      public function init()
@@ -166,6 +173,8 @@ defined( 'ABSPATH' ) OR exit;
             ENGINE = InnoDB $charset_collate";
         dbDelta($sql);    
 
+        $wpdb->query("DROP TABLE $collect");
+
          $sql = "CREATE TABLE IF NOT EXISTS $collect (
             collect_id BIGINT(11) NOT NULL AUTO_INCREMENT,
             collect_img VARCHAR(255) NOT NULL,
@@ -184,6 +193,8 @@ defined( 'ABSPATH' ) OR exit;
             PRIMARY KEY  (collect_id))
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
+
+         $wpdb->query("DROP TABLE $listings");
 
          $sql = "CREATE TABLE IF NOT EXISTS $listings (
             listing_id BIGINT(11) NOT NULL AUTO_INCREMENT,
@@ -236,19 +247,37 @@ defined( 'ABSPATH' ) OR exit;
                 <li>Display featured items.</li>
                 <li>Display a NFT collecton on their respective page.</li>', 
                 'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
+
                 (2, 'V1.0.2','Updates to the backend of the system, cleaned out some redundant code and initialized data on plug-in installation, which is used throughout the system',
                 '<li>Added a support form for the site owner.</li>
                 <li>Dynamic loading of plugin name, changelog & author in dashboard.</li>
                 <li>Added an icon & banner to the plug-in description.</li>
                 <li>Cleaned up code</li>', 
                 'Next update will add a form for users, in which they can add their own NFT collection, which then has to be verified by the owner.'),
-                (3, 'V1.0.3','Added a generator collection form, in which the admin can generate the add-collection-page, where the add collection form with auto display so visitors can submit their own NFT.',
+
+                (3, 'V1.0.3','Updated front-end generated form, image existence check, listing validation and some script fixes.',
                 '<li>Added a Generate collection form button in the dasboard.</li>
                 <li>Added the Generate collection form to the front-end add-collection-form page.</li>
                 <li>Generate the add-collection-form page on click in dashboard.</li>
                 <li>Added NFT Listings to the backend, this displays the current listings.</li>
                 <li>Added a choice table to the database in which you can call yes or no values.</li>', 
-                'Next update will add the abillity to confirm listings.');";
+                'Next update will add the abillity to confirm listings.'),
+
+                (4, 'V1.0.4','Implemented a check on the uploaded image, if exists, it will rename the image and store the new name in the save function. Front-end listings can now be submitted into the existing collections. ',
+                '<li>Implemented a check on the uploaded image, if exists, it will rename the image and store the new name in the save function.</li>
+                <li>Added the Generate collection form to the front-end add-collection-form page.</li>
+                <li>Front-end listings can now be submitted into the existing collections. </li>
+                <li>Front-end images also check in the same format as with the same name as the collection form in the database.</li>
+                <liMoved the network drop page script to the networks in the archive.</li>
+                <li>Updated the update script.</li>
+                <li>Added scss for the promo-nft.com styles to accomodate our front-end.</li>
+                <li>Wrote some more checks on scripts in order to validate them before accepting their input.</li>
+                <li>Moved images folder out of the plug-in, it will be generated in plug-in install in the wp-uploads folder with their own folder.</li>', 
+                'Next update will clean up some code.'
+
+                
+                );";
+
             dbDelta($sql);
 		}
  }

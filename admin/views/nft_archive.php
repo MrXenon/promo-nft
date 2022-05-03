@@ -41,6 +41,8 @@ if (!empty($get_array['action'] == 'delete')) {
     // Check the add form:
     $del = FALSE;
     // Save event types
+    $deleted = $NftPromoModel->delete_page($post_array);
+    if($deleted){
     $result = $NftPromoModel->delete($post_array);
     if ($result) {
         // Save was succesfull
@@ -49,6 +51,7 @@ if (!empty($get_array['action'] == 'delete')) {
         // Indicate error
         $del = FALSE;
     }
+}else{}
 }
 
 if (!empty($get_array['action'] == 'publish')) {
@@ -124,7 +127,7 @@ if (!empty($get_array['action'] == 'publish')) {
                 $pub_link = add_query_arg($params, $base_url);
 
                 // Create delete link
-                $params = array('action' => 'delete', 'id' => $NftPromoModel_obj->getNetworkId(), 'p' => $pageColnet);
+                $params = array('action' => 'delete', 'id' => $NftPromoModel_obj->getNetworkId(), 'p' => $pageColnet, 'colnetName' => $NftPromoModel_obj->getNetworkName().'-drops');
                 $del_link = add_query_arg($params, $base_url);
                 ?>
 

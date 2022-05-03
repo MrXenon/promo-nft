@@ -33,11 +33,14 @@ if($NftPromoModel->checkProjectName($post_array) == 'TRUE'){
     $checkProjName = TRUE;
     $add = FALSE;
     // If the project does not exist, save the project as a listing
-        $result = $NftPromoModel->save($post_array);
+        list($upload,$target_file) = $NftPromoModel->ImageUpload();
+        $target_file = $target_file[1];
+        if($upload){
+        $result = $NftPromoModel->save($post_array,$target_file);
         //If the project is stored in our database, send an e-mail to the administrator about the listing.
         if ($result) {
             $add = TRUE;
-            $upload = $NftPromoModel->ImageUpload();
+
             //Define project mail parameters
             $projectProjectName             = $post_array['projectProjectName'];
             $projectName                    = $post_array['projectName'];
@@ -60,6 +63,9 @@ if($NftPromoModel->checkProjectName($post_array) == 'TRUE'){
             // Indicate error
             $error = TRUE;
         }
+    }else{
+        $uploadError = FALSE;
+    }
     }else{
         $checkProjName = FALSE;
     }
@@ -84,13 +90,16 @@ $Network_list   = $NftPromoModel->getCollectionNetworkList();
                     echo($add ? "<p class='mt-5 alert text-center alert-success'>Collection ".$projectProjectName." has been submitted.</p>" : "<p class='mt-5 text-center alert alert-danger'>Collection could not be added.</p>");
                 }
                 if (isset($sent)) {
-                    echo($sent ? '<p class="alert text-center alert-success">Collection has been succesfully submitted.</p>':'');
+                    echo($sent ? '<p class="alert text-center alert-success">Collection has been succesfully submitted for review.</p>':'');
+                }
+                if (isset($uploadError)) {
+                    echo($uploadError ? '':'<p class="alert text-center alert-success">Image could not be submitted.</p>');
                 }
                 ?>
         </div>
     </div>
       <div class="row">
-        <form action="<?=$base_url;?>" method="post" class="nft-form" >
+        <form action="<?=$base_url;?>" method="post" class="nft-form" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-md-12">
                     <label for="projectProjectName" class="form-label">Project Name *</label>
@@ -129,7 +138,7 @@ $Network_list   = $NftPromoModel->getCollectionNetworkList();
                 <div class="row">
                     <div class="col-md-4">
                     <label for="projectNetwork" class="form-label">Project Network *</label>
-                        <select name="projectNetwork" class="form-control" list="datalistOptions" id="projectNetwork" required> >
+                        <select name="projectNetwork" class="" list="datalistOptions" id="projectNetwork" required> >
                             <?php foreach ($Network_list as $Network) { ?>
                                 <datalist id="datalistOptions">
                                 <option value="<?= $Network->getNetworkId() ?>"> <?= $Network->getNetworkName(); ?> </option>
@@ -167,7 +176,7 @@ $Network_list   = $NftPromoModel->getCollectionNetworkList();
                 <div class="row">
                     <div class="col-md-12">
                     <label for="projectImage" class="form-label">Project Image *</label>
-                            <input type="file" name="fileToUpload" class="form-control customLineHeight" id="inputGroupFile02" value=""
+                            <input type="file" name="fileToUpload" class=" customLineHeight" id="inputGroupFile02" value=""
                             onchange="document.getElementById('projectImage').value = this.value.split('\\').pop().split('/').pop()" required>
                             <input type="hidden" class="form-control" readonly id="projectImage" name="projectImage" value="" required>
                     </div>

@@ -24,8 +24,8 @@
                 $my_page_1 = add_menu_page( __( 'Promo Nft', 'promo-nft'),__( 'Promo Nft', 'promo-nft' ),'','promo-nft-admin',array( 'PromoNft_AdminController', 'adminMenuPage'),'https://www.kevinschuit.com/images/20x20logoWit.png','3');
                 $my_page_2 = add_submenu_page ('promo-nft-admin',__( 'Dashboard', 'promo-nft' ),__( 'Dashboard', 'promo-nft'),'manage_options','nft_dashboard', array( 'PromoNft_AdminController', 'nftDashboard'));
                 $my_page_3 = add_submenu_page ('promo-nft-admin',__( 'Collection Network', 'promo-nft' ),__( 'Collection Network', 'promo-nft'),'manage_options','nft_colnet', array( 'PromoNft_AdminController', 'nftCollectionNetwork'));
-                if(PromoNft_AdminController::getNrOfCollectionNetworks() > 1){
-                $my_page_4 = add_submenu_page ('promo-nft-admin',__( 'NFT Collections', 'promo-nft' ), __( 'NFT Collections', 'promo-nft'),'manage_options','nft_collections', array( 'PromoNft_AdminController', 'nftCollections'));
+                if(PromoNft_AdminController::getNrOfCollectionNetworks() < 1){}else{
+                    $my_page_4 = add_submenu_page ('promo-nft-admin',__( 'NFT Collections', 'promo-nft' ), __( 'NFT Collections', 'promo-nft'),'manage_options','nft_collections', array( 'PromoNft_AdminController', 'nftCollections'));
                 }
                 $my_page_5 = add_submenu_page ('promo-nft-admin',__( 'Archive', 'promo-nft' ),__( 'Archive', 'promo-nft'),'manage_options', 'nft_archive', array( 'PromoNft_AdminController', 'nftCollectionArchive'));
                 $my_page_6 = add_submenu_page ('promo-nft-admin',__( 'NFT Listings', 'promo-nft' ),__( 'NFT Listings', 'promo-nft'),'manage_options', 'nft_listings', array( 'PromoNft_AdminController', 'nftListings'));
@@ -61,14 +61,14 @@
              }
 
 
-    static function getNrOfCollectionNetworks(){
-        global $wpdb;
+        static function getNrOfCollectionNetworks(){
+            global $wpdb;
 
-        $query = "SELECT COUNT(*) AS nr FROM `". $wpdb->prefix ."nft_colnet"."`";
-        $result = $wpdb->get_results( $query, ARRAY_A );
+            $query = "SELECT COUNT(*) AS nr FROM `". $wpdb->prefix ."nft_colnet"."`";
+            $result = $wpdb->get_results( $query, ARRAY_A );
 
-        return $result[0]['nr'];
-    }
+            return $result[0]['nr'];
+        }
 
         /**
         * The main menu page

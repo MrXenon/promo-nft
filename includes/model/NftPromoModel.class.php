@@ -90,9 +90,8 @@ class NftPromoModel {
     /* #region NftPostValues */
         public function getPostValues(){return $this->nftPostValues->getPostValues();}
     /* #endregion */
-
     /* #region NftSaveUploadDelete */
-        public function save($input_array){return $this->nftSaveUploadDelete->save($input_array);}
+        public function save($input_array,$target_file){return $this->nftSaveUploadDelete->save($input_array,$target_file);}
         public function update($input_array){return $this->nftSaveUploadDelete->update($input_array);}
         public function delete($input_array){return $this->nftSaveUploadDelete->delete($input_array);}
         public function archive($input_array){return $this->nftSaveUploadDelete->archive($input_array);}
@@ -133,7 +132,6 @@ class NftPromoModel {
         public function getListings(){return $this->nftListsAndNumbers->getListings();}
         public function getChoiceById($id){return $this->nftListsAndNumbers->getChoiceById($id);}
     /* #endregion */
-
     /* #region Get Network */
         public function getNetworkId(){
             return $this->networkId;

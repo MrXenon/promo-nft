@@ -44,7 +44,7 @@ if (!empty($post_array['add'])) {
     // Save event types
     if($NftPromoModel->checkNetworkName($post_array) == 'TRUE'){
         $checkNetName = TRUE;
-        $result = $NftPromoModel->save($post_array);
+        $result = $NftPromoModel->save($post_array,$target_file);
         if ($result) {
             // Save was succesfull
             $NftPromoModel->create_page($post_array);
@@ -78,7 +78,6 @@ if (!empty($get_array['action'] == 'delete')) {
     // Check the add form:
     $del = FALSE;
     // Save event types
-    $NftPromoModel->delete_page($post_array);
     $result = $NftPromoModel->delete($post_array);
     if ($result) {
         // Save was succesfull

@@ -30,7 +30,7 @@ class NftComponentCheck{
     public function checkProjectName($input_array){
         global $wpdb;
         $ProjectName = $input_array['projectProjectName'];
-        if(null === $wpdb->get_row("SELECT * FROM `".$this->getListingsTable()."` WHERE `listing_project` ='$ProjectName'")){
+        if(null === $wpdb->get_row("SELECT * FROM `".$this->getListingTable()."` WHERE `listing_project` ='$ProjectName'")){
             if(null === $wpdb->get_row("SELECT * FROM `".$this->getCollectionsTable()."` WHERE `collect_title` ='$ProjectName'")){
                 return TRUE;
             } 

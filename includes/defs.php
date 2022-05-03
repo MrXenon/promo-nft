@@ -21,7 +21,7 @@ define ( 'PROMO_NFT_PLUGIN_ICONS_DIR', get_site_url() . '/wp-content/plugins/'. 
 
 define ( 'PROMO_NFT_PLUGIN_ICONS_CRYPTO_DIR', PROMO_NFT_PLUGIN_ICONS_DIR . '/crypto' );
 
-define ( 'PROMO_NFT_PLUGIN_IMG_DIR', get_site_url() . '/wp-content/plugins/'. PROMO_NFT_PLUGIN_NAME . '/images/' );
+define ( 'PROMO_NFT_PLUGIN_IMG_DIR', get_site_url() . '/wp-content/uploads' . '/promo-nft-images/' );
 
 define ( 'PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR', PROMO_NFT_PLUGIN_INCLUDES_DIR	. '/views'	);
 

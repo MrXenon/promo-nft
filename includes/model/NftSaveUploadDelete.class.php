@@ -20,7 +20,7 @@ class NftSaveUploadDelete{
     private function getListingTable(){return $this->nftTables->getListingTable();}
 /**---------------------------------------------------------------------------------------------------------------------------------------- */
 
-    public function save($input_array){
+    public function save($input_array,$target_file){
         if($input_array['p'] == 'nft_colnet'){
             try {
                 $array_fields = array( 'CollectionName', 'CollectionDescription','archive');
@@ -69,7 +69,12 @@ class NftSaveUploadDelete{
 
                 global $wpdb;
 
-                $wpdb->query($wpdb->prepare("INSERT INTO `". $this->getListingsTable()
+                if($target_file == $input_array['projectImage']){
+                }else{
+                    $input_array['projectImage'] = $target_file;
+                }
+
+                $wpdb->query($wpdb->prepare("INSERT INTO `". $this->getListingTable()
                     ."` ( `listing_project`,`listing_name`, `listing_email`,`listing_desc`,`listing_mintdate`,`listing_presale`,`listing_network`,
                     `listing_minprice`,`listing_supply`,`listing_twitter`,`listing_discord`,`listing_website`,`listing_image`,`listing_featured`)".
                     " VALUES ( '%s', '%s','%s','%s','%s','%s','%d','%s','%d','%s','%s','%s','%s','%s');",
@@ -100,7 +105,7 @@ class NftSaveUploadDelete{
        }else{
             try {
                 $array_fields = array('CollectionImage','CollectionName', 'CollectionDescription', 'CollectionDate','CollectionPredate','CollectionNetId','CollectionSupply',
-                'CollectionSite','CollectionTwitter','CollectionDiscord','CollectionFeatured','CollectionPrice','archive');
+                'CollectionSite','CollectionTwitter','CollectionDiscord','CollectionPrice','archive');
                 $data_array = array();
     
                 foreach( $array_fields as $field){
@@ -112,6 +117,11 @@ class NftSaveUploadDelete{
                 }
 
                 global $wpdb;
+
+                if($target_file == $input_array['CollectionImage']){
+                }else{
+                    $input_array['CollectionImage'] = $target_file;
+                }
 
                 // Insert query
                 $wpdb->query($wpdb->prepare("INSERT INTO `". $this->getCollectionsTable()
@@ -177,7 +187,7 @@ class NftSaveUploadDelete{
     }else{
         try {
             $array_fields = array('id','CollectionImage','CollectionName', 'CollectionDescription', 'CollectionDate','CollectionPredate','CollectionNetId','CollectionSupply',
-            'CollectionSite','CollectionTwitter','CollectionDiscord','CollectionFeatured','CollectionPrice','archive');
+            'CollectionSite','CollectionTwitter','CollectionDiscord','CollectionPrice','archive');
             $data_array = array();
 
             foreach( $array_fields as $field){
@@ -239,6 +249,24 @@ class NftSaveUploadDelete{
         return TRUE;
         }
         return FALSE;
+    }elseif($input_array['p'] == 'nft_listings'){
+        try {
+            // Check input id
+            if (!isset($input_array['id']) ) throw new Exception(__("Missing mandatory fields") );
+            global $wpdb;
+            // Delete row by provided id (WordPress style)
+            $wpdb->delete( $this->getListingTable(),
+                array( 'listings_id' => $input_array['id'] ),
+                array( '%d' ) );
+                
+            if ( !empty($wpdb->last_error) ){
+                throw new Exception( $wpdb->last_error);
+            }
+        } catch (Exception $exc) {
+
+        return FALSE;
+        }
+        return TRUE;
     }else{
         try {
             // Check input id
@@ -278,6 +306,21 @@ class NftSaveUploadDelete{
         return TRUE;
         }
         return FALSE;
+    }elseif($input_array['p'] == 'nft_listings'){
+        try {
+            // Check input id
+            if (!isset($input_array['id']) ) throw new Exception(__("Missing mandatory fields") );
+            global $wpdb;
+            // Delete row by provided id (WordPress style)
+            $wpdb->query("UPDATE " .$this->getListingTable()." SET `deleted` = 1 WHERE listing_id = ".$input_array['id']."");
+
+            if ( !empty($wpdb->last_error) ){
+                throw new Exception( $wpdb->last_error);
+            }
+        } catch (Exception $exc) {
+        return FALSE;
+        }
+        return TRUE;
     }else{
         try {
             // Check input id
@@ -336,8 +379,9 @@ public function publish($input_array){
     public function ImageUpload()
     {
 
-        // $target_dir = plugins_url('my-image-garden') . '/images/';
-        $target_dir = './../wp-content/plugins/'.PROMO_NFT_PLUGIN_NAME.'/images/';
+        // $target_dir = './../wp-content/plugins/'.PROMO_NFT_PLUGIN_NAME.'/images/';
+        $upload_dir =   wp_upload_dir()['basedir'];
+        $target_dir =  $upload_dir. '/promo-nft-images/';
         $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -361,8 +405,13 @@ public function publish($input_array){
 
         // Check if file already exists
         if (file_exists($target_file)) {
+            $fileName = $_FILES["fileToUpload"]["name"];
+            $file = explode('.',$fileName);
 
-            $uploadOk = 3;
+            $rand = rand(1,10000);
+            $fileName = $file[0].$rand.'.'.$file[1];
+
+            $target_file = $target_dir . $fileName;
         }
 
         // Allow certain file formats
@@ -382,13 +431,15 @@ public function publish($input_array){
             } else {
             }
         }
-        return $uploadOk;
+        $target_file = explode( $target_dir,$target_file);
+        return array($uploadOk, $target_file);
     }
 
     public function ImageUploadUpdate($input_array)
     {
 
-        $target_dir         = "./../wp-content/plugins/".PROMO_NFT_PLUGIN_NAME."/images/";
+        $upload_dir         =  wp_upload_dir()['basedir'];
+        $target_dir         = $upload_dir. '/promo-nft-images/';
         $target_file        = $target_dir . basename($_FILES["fileToUpload"]["name"]);
         $uploadOk           = 1;
         $imageFileType      = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
@@ -418,6 +469,17 @@ public function publish($input_array){
             && $imageFileType != "gif"
         ) {
             $uploadOk = 4;
+        }
+
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $fileName = $_FILES["fileToUpload"]["name"];
+            $file = explode('.',$fileName);
+
+            $rand = rand(1,10000);
+            $fileName = $file[0].$rand.'.'.$file[1];
+
+            $target_file = $target_dir . $fileName;
         }
 
         // Check if $uploadOk is set to 0 by an error
@@ -504,6 +566,8 @@ public function delete_page($input_array)
             'colnetName' => array('filter' => FILTER_SANITIZE_STRING ),
 
             'generateAddCollectionForm' => array('filter' => FILTER_SANITIZE_STRING ),
+
+            'publishListing' =>array('filter' => FILTER_SANITIZE_STRING), 
 
             //Id of current row
             'id' => array('filter' => FILTER_VALIDATE_INT ));
