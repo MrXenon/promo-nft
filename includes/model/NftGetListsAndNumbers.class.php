@@ -91,9 +91,9 @@ class NftgetListsAndNumbers{
     public function getNrOfFeaturedCollections(){
         global $wpdb;
 
-        $query = "SELECT COUNT(*) AS nr FROM `". $this->getCollectionsTable()."` WHERE `collect_featured` ='on'";
+        $query = "SELECT COUNT(*) AS nr FROM `". $this->getCollectionsTable()."` WHERE `collect_featured` = 1";
         $result = $wpdb->get_results( $query, ARRAY_A );
-
+        
         return $result[0]['nr'];
     }
 
@@ -303,7 +303,7 @@ class NftgetListsAndNumbers{
         global $wpdb;
         $return_array = array();
 
-        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getCollectionsTable() ."` WHERE `collect_featured`= 'on' ORDER BY `collect_id`", ARRAY_A);
+        $result_array = $wpdb->get_results( "SELECT * FROM `". $this->getCollectionsTable() ."` WHERE `collect_featured`= 1 ORDER BY `collect_id`", ARRAY_A);
 
         // For all database results:
         foreach ( $result_array as $idx => $array){

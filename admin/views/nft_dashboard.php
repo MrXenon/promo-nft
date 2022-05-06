@@ -54,7 +54,6 @@ $listings   =   $NftPromoModel->getNrOfListings();
     height: 125px;
 }
 </style>
-
 <div class="grey-bg container-fluid">
   <section id="minimal-statistics">
     <div class="row">
