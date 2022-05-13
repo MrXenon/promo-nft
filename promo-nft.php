@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 1.0.4
+ * Version: 1.0.4.1
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -273,6 +273,10 @@ defined( 'ABSPATH' ) OR exit;
                 <li>Added scss for the promo-nft.com styles to accomodate our front-end.</li>
                 <li>Wrote some more checks on scripts in order to validate them before accepting their input.</li>
                 <li>Moved images folder out of the plug-in, it will be generated in plug-in install in the wp-uploads folder with their own folder.</li>', 
+                'Next update will clean up some code.'),
+
+                (5, 'V1.0.4.1','Small price update',
+                '<li>Changed price & supply column width on NftSingle</li>', 
                 'Next update will clean up some code.'
 
                 

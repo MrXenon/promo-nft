@@ -5,7 +5,7 @@
  * Written by Kevin Schuit <info@kevinschuit.com>, April 2022
  */
 
-define ( 'PROMO_NFT_VERSION', '0.0.1' );
+define ( 'PROMO_NFT_VERSION', '1.0.4.1' );
 
 define ( 'PROMO_NFT_REQUIRED_WP_VERSION', '4.0' );
 
