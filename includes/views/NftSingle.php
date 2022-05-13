@@ -38,7 +38,8 @@ if ($NftPromoModel->getNrOfPageCollections($pageId) < 1) {
                     $class = $obj->getNetworkById($id);
                     ?>
                     <div class="col-md-2"><div class="<?= $class; ?>"></div></div>
-                    <div class="col-md-10"><p class="white dateSupplySingle"><?= $obj->getCollectionSupply();?></p></div>
+                    <div class="col-md-7"><p class="mintprice white text-left dateSupplySingle"><?= $obj->getCollectionPrice();?> </p></div><br><br>
+                    <div class="col-md-4"><p class="white dateSupplySingle"><?= $obj->getCollectionSupply();?></p></div>
                 </div>
             </div>
 
