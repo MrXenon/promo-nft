@@ -17,11 +17,10 @@ if ($NftPromoModel->getNrOfFeaturedCollections() < 1) {
 <div class="row">
         <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner" role="listbox">
-                <div class="carousel-item active">
-                </div>
+
     <?php foreach($col_list as $col_obj){ ?>
-                <div class="carousel-item">
-                    <div class="col-md-4 featuredCard">
+                <div class="carousel-item col-md-12">
+                    <div class="featuredCard">
                         <div class="bg-dark padding-10 margin-10">
                             <h2 class="white text-center"><?= $col_obj->getCollectionTitle();?></h2>
                             <img class="featured-img" src="<?= PROMO_NFT_PLUGIN_IMG_DIR . $col_obj->getCollectionImage();?>">
@@ -64,13 +63,7 @@ if ($NftPromoModel->getNrOfFeaturedCollections() < 1) {
                 </div>
     <?php } ?>
         </div>
-            <!-- <a class="carousel-control-prev bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </a>
-            <a class="carousel-control-next bg-transparent w-aut" href="#recipeCarousel" role="button" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </a> -->
-        </div>
+    </div>
 </div>
 
 <?php }?>

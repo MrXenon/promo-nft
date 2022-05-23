@@ -153,7 +153,7 @@ class NftSaveUploadDelete{
         return TRUE;
         }
     }
-    public function update($input_array){
+    public function update($input_array,$target_file){
         if($input_array['p'] == 'nft_colnet'){
         try {
             $array_fields = array( 'id','CollectionName', 'CollectionDescription');
@@ -198,6 +198,11 @@ class NftSaveUploadDelete{
                 $data_array[] = $input_array[$field];
             }
             global $wpdb;
+
+            if($target_file == $input_array['CollectionImage']){
+            }else{
+                $input_array['CollectionImage'] = $target_file;
+            }
             // Update query
             //*
             $wpdb->query($wpdb->prepare("UPDATE ".$this->getCollectionsTable()."
@@ -491,10 +496,9 @@ public function publish($input_array){
             } else {
             }
         }
-        return $uploadOk;
+        $target_file = explode( $target_dir,$target_file);
+        return array($uploadOk, $target_file);
     }
-    return $uploadOk;
-    
 }
 
 

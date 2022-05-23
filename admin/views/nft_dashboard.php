@@ -33,11 +33,11 @@ $ColNr      =   $NftPromoModel->getNrOfCollections();
 $featured   =   $NftPromoModel->getNrOfFeaturedCollections();
 $ArchiveNet =   $NftPromoModel->getNrOfArchivedNetworks();
 $ArchivedCol=   $NftPromoModel->getNrOfArchivedCollections();
+$listings   =   $NftPromoModel->getNrOfListings();
 $Shortcodes =   $NftPromoModel->getNftShortcodes();
 $Author     =   $NftPromoModel->getNftAuthor();
 $updateLog  =   $NftPromoModel->getNftUpdateLog();
 $changeLog  =   $NftPromoModel->getNftChangeLog();
-$listings   =   $NftPromoModel->getNrOfListings();
 ?>
 <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/css/bootstrap-extended.min.css">

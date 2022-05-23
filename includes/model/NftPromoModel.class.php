@@ -92,7 +92,7 @@ class NftPromoModel {
     /* #endregion */
     /* #region NftSaveUploadDelete */
         public function save($input_array,$target_file){return $this->nftSaveUploadDelete->save($input_array,$target_file);}
-        public function update($input_array){return $this->nftSaveUploadDelete->update($input_array);}
+        public function update($input_array,$target_file){return $this->nftSaveUploadDelete->update($input_array,$target_file);}
         public function delete($input_array){return $this->nftSaveUploadDelete->delete($input_array);}
         public function archive($input_array){return $this->nftSaveUploadDelete->archive($input_array);}
         public function publish($input_array){return $this->nftSaveUploadDelete->publish($input_array);}

@@ -1,7 +1,8 @@
+
 let items = document.querySelectorAll('.carousel .carousel-item')
 
 items.forEach((el) => {
-    const minPerSlide = 6
+    const minPerSlide = 2
     let next = el.nextElementSibling
     for (var i=1; i<minPerSlide; i++) {
         if (!next) {
@@ -13,3 +14,4 @@ items.forEach((el) => {
         next = next.nextElementSibling
     }
 });
+$(".carousel-item").first().addClass("active");

@@ -8,13 +8,22 @@ add_shortcode('nft_featured_items','viewFeatured');
 add_shortcode('nft_single','viewSingle');
 add_shortcode('nft_add_collection','addCollection');
 function viewFeatured($atts, $content = NULL){
+    ob_start();
     include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftFeatured.php';
+    $output = ob_get_clean();
+    return $output;
 }
 
 function viewSingle($atts, $content = NULL){
+    ob_start();
     include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftSingle.php';
+    $output = ob_get_clean();
+    return $output;
 }
 
 function addCollection($atts, $content = NULL){
+    ob_start();
     include PROMO_NFT_PLUGIN_INCLUDES_VIEWS_DIR . '/NftAddCollection.php';
+    $output = ob_get_clean();
+    return $output;
 }

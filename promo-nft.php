@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) OR exit;
  * Plugin Name: Promo Nft
  * Plugin URI: <>
  * Description: PromoNFT is a plug-in to serve promo-nft.com and display NFT's, help manage the NFT collections and set some new ones up. Currently the plug-in is still under development and more features will be added.
- * Version: 1.0.4.1
+ * Version: 1.0.4.2
  * Author: Kevin Schuit
  * Author URI: https://kevinschuit.com
  * Text Domain: PromoNft
@@ -65,6 +65,7 @@ defined( 'ABSPATH' ) OR exit;
             wp_enqueue_script('bootstrap2', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.esm.js');
             wp_enqueue_script('bootstrap3', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/js/bootstrap.js');
             wp_enqueue_script('bootstrap4', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/jquery/jquery.slim.min.js');
+            wp_register_script('functions', plugins_url('bootstrap-5.1.3-dist/jquery/functions.js'  , __FILE__ ),'','1.0',true);
             wp_enqueue_script('functions', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/jquery/functions.js');
             wp_enqueue_script('jquery', plugin_dir_url(__FILE__).'bootstrap-5.1.3-dist/jquery/jquery.js');
 
@@ -212,6 +213,7 @@ defined( 'ABSPATH' ) OR exit;
             listing_website VARCHAR(255) NOT NULL,
             listing_image VARCHAR(255) NOT NULL,
             listing_featured VARCHAR(1) NOT NULL,
+            deleted BIT(1) NOT NULL,
             PRIMARY KEY  (listing_id))
             ENGINE = InnoDB $charset_collate";
          dbDelta($sql);
@@ -277,7 +279,12 @@ defined( 'ABSPATH' ) OR exit;
 
                 (5, 'V1.0.4.1','Small price update',
                 '<li>Changed price & supply column width on NftSingle</li>', 
-                'Next update will clean up some code.'
+                'Next update will clean up some code.'),
+
+                (6, 'V1.0.4.2','Fixed a minor bug with the image update & listings',
+                '<li>Set image update to retrieve its actual image name & set it to store with a new name if updated name exists, unless image is not updated</li>
+                <li>Gave the listings table a deleted column, deleted column was implemented but not set to be created in the database, which caused the listings to not save.</li>', 
+                'Next update depending on test results.'
 
                 
                 );";

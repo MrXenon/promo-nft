@@ -59,13 +59,14 @@ if (!empty($post_array['add'])) {
     }
 }
 
-if (!empty($post_array['HTTP_HOST'])) {
+if (!empty($post_array['update'])) {
 
     // Check the add form:
     $update = FALSE;
     // Save event types
-    $result = $NftPromoModel->update($post_array);
-    $upload = $NftPromoModel->ImageUploadUpdate($post_array);
+    list($upload,$target_file) = $NftPromoModel->ImageUploadUpdate($post_array);
+    $target_file = $target_file[1];
+    $result = $NftPromoModel->update($post_array,$target_file);
     if ($result) {
         // Save was succesfull
         $update = TRUE;
@@ -106,8 +107,6 @@ if (!empty($get_array['action'] == 'archive')) {
 }
 $Network_list = $NftPromoModel->getCollectionNetworkList();
 $type_list = $NftPromoModel->getCollectionList();
-
-var_dump($post_array);
 ?>
 
 
