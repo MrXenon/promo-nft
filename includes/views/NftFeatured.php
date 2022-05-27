@@ -42,7 +42,7 @@ if ($NftPromoModel->getNrOfFeaturedCollections() < 1) {
                                         $class = $col_obj->getNetworkById($id);
                                         ?>
                                         <div class="col-md-2"><div class="<?= $class; ?>"></div></div>
-                                        <div class="col-md-10"><div class="col-md-10 white dateSupply padding-20-left"><?= $col_obj->getCollectionSupply();?></div></div>
+                                        <div class="col-md-10"><div class="col-md-10 white dateSupply padding-20-left"><?= $col_obj->getCollectionPrice();?><Br><?= $col_obj->getCollectionSupply();?></div></div>
                                         </div>
                                     </div>
                             </div>
